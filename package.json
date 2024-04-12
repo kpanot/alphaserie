@@ -1,0 +1,21 @@
+{
+  "name": "alphaseries",
+  "private": true,
+  "version": "0.0.1",
+  "description": "My betaseries follow list (in better)",
+  "main": "index.js",
+  "author": "Kilian Panot <kilian.panot@gmail.com>",
+  "license": "MIT",
+  "packageManager": "yarn@4.1.1",
+  "scripts": {
+    "start": "yarn workspace app dev",
+    "build": "yarn workspaces foreach --topological-dev -W run build"
+  },
+  "workspaces": [
+    "app",
+    "sdk/*"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
