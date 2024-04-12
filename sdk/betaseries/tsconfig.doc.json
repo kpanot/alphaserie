@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.build",
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": "."
+  },
+  "exclude": [
+    "**/*.fixture.ts",
+    "**/fixtures/*.ts",
+    "**/fixtures*.ts",
+    "**/*.mock*.ts",
+    "**/*.spec.ts",
+    "**/*.perf.ts"
+  ],
+  "include": [
+    "./src/models/**/*.ts",
+    "./src/helpers/**/*.ts"
+  ]
+}
