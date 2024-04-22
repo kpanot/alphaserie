@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { TextPlaceholder, Spinner, Checkbox } from "flowbite-svelte";
+  import { TextPlaceholder, Checkbox } from "flowbite-svelte";
   import GroupItem from "../GroupItem.svelte";
-  import { filterShow, hasNextToSee, type Store } from '../shows.store';
+  import { filterShow, hasNextToSee } from '../../../../lib/shows.store';
+  import store from '../../../../lib/shows.store';
   import { derived } from "svelte/store";
   import ShowItem from "./ShowItem.svelte";
 
-  export let store: Store | undefined;
   export let filter: string | undefined;
 
   let finishedOnly = false;
 
-  $: archive = store?.archive;
-  $: currentStore = store?.currentStore;
+  $: archive = $store?.archive;
+  $: currentStore = $store?.currentStore;
   $: shows = currentStore && derived(currentStore, ({data}) => {
       return data && data.pages
         .reduce((acc, page) => {
@@ -41,7 +41,7 @@
           {@const reqArchive = $archive}
           {#if reqArchive}
             <li>
-              <ShowItem show={show} on:archive={() => reqArchive.mutate(show.id)}  isArchivedLoading="{reqArchive.isPending && reqArchive.variables === show.id}" stores={store} />
+              <ShowItem show={show} on:archive={() => reqArchive.mutate(show.id)}  isArchivedLoading="{reqArchive.isPending && reqArchive.variables === show.id}" />
             </li>
           {/if}
         {/each}

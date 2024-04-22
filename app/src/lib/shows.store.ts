@@ -1,13 +1,15 @@
 import { createMutation, useQueryClient, createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
-import type { EpisodesApi, ShowsApi } from 'sdk';
-import { derived,  } from 'svelte/store';
+import type { EpisodesApi, SearchApi, ShowsApi } from 'sdk';
+import { derived, writable } from 'svelte/store';
 
 const LIMIT_SUMMARIZE_PARALLEL = 199;
+const LIMIT_SEARCH_RESULT = 50;
 
 const ARCHIVES_LABEL = 'archives';
 const CURRENT_LABEL = 'current';
 const EPISODE_LABEL = 'episodes';
 const EPISODE_SHOW = 'show';
+const SEARCH_LABEL = 'search';
 
 /**
  * Filter the shows to display based on their names
@@ -44,9 +46,23 @@ export const isToSee = (date?: string) => {
  * @param showsApi Show API instance
  * @param episodesApi Episode API instance
  */
-const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi) => {
+const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi) => {
   const userIdLabel = { userId };
   const client = useQueryClient();
+
+  const search = (searchText: string) => {
+    const searchTextLabel = { searchText };
+
+    /** List of the episodes of the show  */
+    const list = createQuery({
+      queryKey: [SEARCH_LABEL, searchTextLabel],
+      queryFn: () => searchApi.getSearchShows({ text: searchText, limit: `${LIMIT_SEARCH_RESULT}` }) as any as Promise<{ shows: any[] }>
+    });
+
+    return {
+      list
+    };
+  }
 
   /**
    * Store for episodes
@@ -55,9 +71,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi) => 
   const episodes = (showId: string) => {
     const showIdLabel = { showId };
 
-    /**
-     * List of the episodes of the show
-     */
+    /** List of the episodes of the show  */
     const list = createQuery({
       queryKey: [userIdLabel, EPISODE_LABEL, showIdLabel],
       queryFn: () => showsApi.getShowsEpisodes({ id: showId }) as any as Promise<{ episodes: any }>
@@ -140,12 +154,28 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi) => 
     onSuccess: () => refresh()
   });
 
+  const allShows = derived([currentStore, archiveStore], ([current, archive]) => {
+    return [
+      ...(current?.data?.pages || []),
+      ...(archive?.data?.pages || [])
+    ].map((page) => page.shows).flat();
+  });
+
+  /** Action to follow a show */
+  const follow = createMutation({
+    mutationFn: (id: string) => showsApi.postShowsShow({ id }),
+    onSuccess: () => refresh()
+  });
+
   return {
+    allShows,
     currentStore,
     archiveStore,
     unarchive,
     archive,
-    episodes
+    episodes,
+    search,
+    follow
   }
 };
 
@@ -154,7 +184,10 @@ export type Store = ReturnType<typeof shows>;
 /** Episode sub-store */
 export type StoreEpisode = ReturnType<Store['episodes']>;
 
-let cache!: Store;
+/**
+ * Writable store to define the APIs to use
+ */
+export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi }>();
 
 /**
  * Store of Shows
@@ -162,4 +195,8 @@ let cache!: Store;
  * @param showsApi Show API instance
  * @param episodesApi Episode API instance
  */
-export default (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi) => (cache ||= shows(userId, showsApi, episodesApi));
+export default derived<typeof registerApis, Store>(registerApis, ($apis, set) => {
+  if ($apis) {
+    set(shows($apis.userId, $apis.showsApi, $apis.episodesApi, $apis.searchApi));
+  }
+});

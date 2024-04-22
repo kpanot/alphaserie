@@ -1,17 +1,17 @@
 <script lang="ts">
   import { derived } from "svelte/store";
-  import { isToSee, type Store } from "../shows.store";
+  import { isToSee, type Store } from "../../../../lib/shows.store";
+  import store from '../../../../lib/shows.store';
   import { Skeleton, Button, Badge } from "flowbite-svelte";
   import Episode from "./Episode.svelte";
   import { ChevronDownOutline, ChevronUpOutline } from "flowbite-svelte-icons";
 
   export let show: any;
-  export let stores: Store | undefined;
 
   let displaySpecial: boolean = false;
   let displayFuture: boolean = false;
 
-  $: episodeStore = show && stores?.episodes(show.id);
+  $: episodeStore = show && $store?.episodes(show.id);
   $: episodeStoreList = episodeStore?.list;
   $: episodeList = episodeStoreList && derived(episodeStoreList, ({data}: any) => data?.episodes
     .sort((a: any, b: any) => {

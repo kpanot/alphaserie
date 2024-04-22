@@ -2,16 +2,16 @@
   import { Checkbox, TextPlaceholder } from "flowbite-svelte";
   import GroupItem from "../GroupItem.svelte";
   import ShowBadge from "./ShowBadge.svelte";
-  import {filterShow, hasNextToSee, type Store} from '../shows.store';
+  import {filterShow, hasNextToSee} from '../../../../lib/shows.store';
+  import store from '../../../../lib/shows.store';
   import { derived } from "svelte/store";
 
   export let filter: string | undefined;
-  export let store: Store | undefined;
 
  let finishedOnly = false;
 
-  $: unarchive = store?.unarchive;
-  $: archiveStore = store?.archiveStore;
+  $: unarchive = $store?.unarchive;
+  $: archiveStore = $store?.archiveStore;
   $: shows = archiveStore && derived(archiveStore, ({data}) => {
       return data && data.pages
         .reduce((acc, page) => {
