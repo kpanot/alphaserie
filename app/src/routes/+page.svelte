@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { EpisodesApi, SearchApi, ShowsApi } from 'sdk';
   import User from './components/User.svelte';
   import Filter from './components/Filter.svelte';
   import { configuration } from '../lib/environment';
+  import { registerApis } from '../lib/shows.store';
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import { AuthenticationApi, BetaseriesIdentifier } from 'sdk';
@@ -11,6 +13,7 @@
   let apiClient: ApiClient | undefined;
   let userId: string | undefined;
   let filter: string = '';
+
   onMount(() => {
     if (!$page.url.searchParams.has('code')) {
       window.location.href = encodeURI(`https://www.betaseries.com/authorize?client_id=${configuration.client_id}&redirect_uri=${configuration.redirect_uri}`);
@@ -24,6 +27,11 @@
     }
   });
 
+  $: showsApi = apiClient && new ShowsApi(apiClient);
+  $: episodesApi = apiClient && new EpisodesApi(apiClient);
+  $: searchApi = apiClient && new SearchApi(apiClient);
+  $: userId && showsApi && episodesApi && searchApi ? registerApis.set({userId, showsApi, episodesApi, searchApi}) : undefined;
+
 </script>
 
 {#if apiClient}
@@ -35,7 +43,7 @@
           <User apiClient={apiClient} bind:userId={userId} />
         </div>
         <div class="flex-auto ">
-          <Groups apiClient={apiClient} userId={userId} filter={filter} />
+          <Groups filter={filter} />
         </div>
       </div>
     </div>

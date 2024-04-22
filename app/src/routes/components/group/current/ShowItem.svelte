@@ -1,13 +1,12 @@
 <script lang="ts">
   import { Button, Spinner } from "flowbite-svelte";
-  import { hasNextToSee, type Store } from "../shows.store";
+  import { hasNextToSee, type Store } from "../../../../lib/shows.store";
   import { ArchiveArrowDownSolid, ChevronDownOutline, ChevronUpOutline, LinkOutline } from "flowbite-svelte-icons";
   import { createEventDispatcher } from "svelte";
   import EpisodeList from "./EpisodeList.svelte";
 
   export let show: any;
   export let isArchivedLoading: boolean;
-  export let stores: Store | undefined;
 
   let expended: boolean = false;
   const dispatch = createEventDispatcher();
@@ -23,7 +22,7 @@
   <div class="flex">
     <!-- svelte-ignore a11y-invalid-attribute -->
     <a
-      href="javascript: void(0)"
+      href="javascript: void(0);"
       role="button"
       class="flex-1 {textColor}"
       on:click={() => expended = !expended}>
@@ -58,7 +57,7 @@
   {#if expended}
     <div>
       <hr class="border-1 border-stale-500 m-2" />
-      <EpisodeList stores={stores} show={show} />
+      <EpisodeList show={show} />
     </div>
   {/if}
 </div>
