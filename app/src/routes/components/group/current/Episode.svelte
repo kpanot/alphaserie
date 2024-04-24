@@ -29,11 +29,11 @@
     {/if}
   </div>
   <div class="flex-none w-20">
-    <div class="-mt-px">
+    <div class="-mt-0.5">
       <Badge color={badgeColor}>s:{episode.season || 0} e:{episode.episode}</Badge>
     </div>
   </div>
-  <a class="grow text-ellipsis overflow-hidden" href={null} on:click={() => !episode.user?.seen && ($watch)?.mutate({id: episode.id, watch: true})}>{episode.title}</a>
+  <a class="grow text-ellipsis overflow-hidden text-sm pt-1" href={null} on:click={() => !episode.user?.seen && ($watch)?.mutate({id: episode.id, watch: true})}>{episode.title}</a>
   <a class="flex-none w-20 italic text-slate-500 text-xs pt-1" href={null} on:click={() => !episode.user?.seen && ($watch)?.mutate({id: episode.id, watch: true})}>
     {episode.date}
   </a>

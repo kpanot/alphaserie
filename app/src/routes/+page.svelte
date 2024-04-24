@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { EpisodesApi, SearchApi, ShowsApi } from 'sdk';
+  import { EpisodesApi, SearchApi, SeasonsApi, ShowsApi } from 'sdk';
   import User from './components/User.svelte';
   import Filter from './components/Filter.svelte';
   import { configuration } from '../lib/environment';
@@ -30,7 +30,10 @@
   $: showsApi = apiClient && new ShowsApi(apiClient);
   $: episodesApi = apiClient && new EpisodesApi(apiClient);
   $: searchApi = apiClient && new SearchApi(apiClient);
-  $: userId && showsApi && episodesApi && searchApi ? registerApis.set({userId, showsApi, episodesApi, searchApi}) : undefined;
+  $: seasonsApi = apiClient && new SeasonsApi(apiClient);
+  $: userId && showsApi && episodesApi && searchApi && seasonsApi
+    ? registerApis.set({userId, showsApi, episodesApi, searchApi, seasonsApi})
+    : undefined;
 
 </script>
 

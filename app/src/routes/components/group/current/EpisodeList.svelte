@@ -1,15 +1,11 @@
 <script lang="ts">
   import { derived } from "svelte/store";
-  import { isToSee, type Store } from "../../../../lib/shows.store";
+  import { isToSee } from "../../../../lib/shows.store";
   import store from '../../../../lib/shows.store';
-  import { Skeleton, Button, Badge } from "flowbite-svelte";
+  import { Tabs, TabItem, Skeleton, Badge } from "flowbite-svelte";
   import Episode from "./Episode.svelte";
-  import { ChevronDownOutline, ChevronUpOutline } from "flowbite-svelte-icons";
 
   export let show: any;
-
-  let displaySpecial: boolean = false;
-  let displayFuture: boolean = false;
 
   $: episodeStore = show && $store?.episodes(show.id);
   $: episodeStoreList = episodeStore?.list;
@@ -28,61 +24,58 @@
       }
     }));
   $: episodeStandardList = episodeList && derived(episodeList, (episodes) => (episodes as any[])?.filter(({date, special}: any) => isToSee(date) && !special));
+  $: numberNotSeen = episodeStandardList && derived(episodeStandardList,(episodes) => (episodes as any[])?.filter(({user}) => !user?.seen).length);
   $: episodeSpecialList = episodeList && derived(episodeList, (episodes) => (episodes as any[])?.filter(({special}: any) => !!special));
   $: numberNotSeenSpecial = episodeSpecialList && derived(episodeSpecialList,(episodes) => (episodes as any[])?.filter(({user}) => !user?.seen).length);
   $: episodeFutureList = episodeList && derived(episodeList, (episodes) => (episodes as any[])?.filter(({date, special}: any) => !isToSee(date) && !special));
 </script>
 
-<div class="m-2">
+<div class="m-2 mt-4">
   {#if $episodeList}
-    <ul>
-        {#if $episodeSpecialList && ($episodeSpecialList).length > 0}
-          <div class="text-center">
-            <Button on:click={() => displaySpecial = !displaySpecial} color="none" size="xs" class="hover:underline">
-              <span class="text-slate-500">
-              {#if displaySpecial} <ChevronUpOutline /> {:else} <ChevronDownOutline /> {/if}
-              </span>
-              <span class="text-slate-500">
-                {#if displaySpecial} Hide {:else} Display {/if} special episodes
-                {#if $numberNotSeenSpecial && $numberNotSeenSpecial > 0 }<Badge rounded>{$numberNotSeenSpecial}</Badge>{/if}
-              </span>
-              <span class="text-slate-500">
-              {#if displaySpecial} <ChevronUpOutline /> {:else} <ChevronDownOutline /> {/if}
-              </span>
-            </Button>
-          </div>
-        {/if}
-        {#if displaySpecial}
-          {#each $episodeSpecialList as episode}
+    {@const hasSpecialEpisode = $episodeSpecialList && $episodeSpecialList.length > 0}
+    {@const hasFutureEpisode = $episodeFutureList && $episodeFutureList.length > 0}
+    {@const withTab = hasSpecialEpisode || hasFutureEpisode}
+
+    <div class="bg-gray-50 rounded-lg p-1">
+      {#if (withTab) }
+        <Tabs tabStyle="underline">
+          <TabItem open>
+            <div slot="title">To Watch {#if $numberNotSeen && $numberNotSeen > 0 }<Badge rounded>{$numberNotSeen}</Badge>{/if}</div>
+            <ul>
+              {#each $episodeStandardList as episode}
+                <li><Episode episode={episode} store={episodeStore} /></li>
+              {/each}
+            </ul>
+          </TabItem>
+          {#if (hasFutureEpisode) }
+            <TabItem>
+              <div slot="title">Future Episodes <Badge rounded color="dark">{$episodeFutureList.length}</Badge></div>
+              <ul>
+                {#each $episodeFutureList as episode}
+                  <li><Episode episode={episode} store={episodeStore} /></li>
+                {/each}
+              </ul>
+            </TabItem>
+          {/if}
+          {#if (hasSpecialEpisode) }
+            <TabItem>
+              <div slot="title">Special Episodes {#if $numberNotSeenSpecial && $numberNotSeenSpecial > 0 }<Badge rounded>{$numberNotSeenSpecial}</Badge>{/if}</div>
+              <ul>
+              {#each $episodeSpecialList as episode}
+                <li><Episode episode={episode} store={episodeStore} /></li>
+              {/each}
+            </ul>
+            </TabItem>
+          {/if}
+        </Tabs>
+      {:else}
+        <ul class="m-3">
+          {#each $episodeStandardList as episode}
             <li><Episode episode={episode} store={episodeStore} /></li>
           {/each}
-          <hr class="border-1 border-stale-500 m-2" />
-        {/if}
-        {#if $episodeFutureList && ($episodeFutureList).length > 0}
-          <div class="text-center">
-            <Button on:click={() => displayFuture = !displayFuture} color="none" size="xs" class="hover:underline">
-              <span class="text-slate-500">
-              {#if displayFuture} <ChevronUpOutline /> {:else} <ChevronDownOutline /> {/if}
-              </span>
-              <span class="text-slate-500">
-                {#if displayFuture} Hide {:else} Display {/if} future episodes
-              </span>
-              <span class="text-slate-500">
-              {#if displayFuture} <ChevronUpOutline /> {:else} <ChevronDownOutline /> {/if}
-              </span>
-            </Button>
-          </div>
-        {/if}
-        {#if displayFuture}
-          {#each $episodeFutureList as episode}
-            <li><Episode episode={episode} store={episodeStore} /></li>
-          {/each}
-          <hr class="border-1 border-stale-500 m-2" />
-        {/if}
-      {#each $episodeStandardList as episode}
-        <li><Episode episode={episode} store={episodeStore} /></li>
-      {/each}
-    </ul>
+        </ul>
+      {/if}
+    </div>
   {:else if !$episodeStoreList || ($episodeStoreList).fetchStatus !== 'idle'}
     <div class="ml-2 flex-initial">
       <Skeleton />
