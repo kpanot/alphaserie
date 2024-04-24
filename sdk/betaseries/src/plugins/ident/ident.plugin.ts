@@ -7,6 +7,7 @@ interface BetaseriesIdentifierOptions {
   client_secret: string;
   redirect_uri?: string;
   code: string;
+  onFailure?: (error: string) => void | Promise<void>
 }
 
 interface authenticationResponse {
@@ -35,22 +36,40 @@ export class BetaseriesIdentifier implements RequestPlugin {
     };
   }
 
+  private async reportError(message: string) {
+    if (this.options.onFailure) {
+      await this.options.onFailure(message);
+    } else {
+
+      throw new Error(message);
+    }
+  }
+
   private async getToken(): Promise<authenticationResponse> {
     if (this.api) {
-      const response = await this.api.postOauthAccessToken({
-        client_id: this.options.client_id,
-        client_secret: this.options.client_secret,
-        redirect_uri: this.options.redirect_uri,
-        code: this.options.code
-      }) as any as authenticationResponse;
+      try {
+        const response = await this.api.postOauthAccessToken({
+          client_id: this.options.client_id,
+          client_secret: this.options.client_secret,
+          redirect_uri: this.options.redirect_uri,
+          code: this.options.code
+        }) as any as authenticationResponse;
 
-      const token = response;
-      if (!token) {
-        throw new Error('Token not found in response');
+        const token = response;
+        if (!token) {
+          this.reportError('Token not found in response');
+        } else if (!token.access_token || !token.token_type) {
+          this.reportError('Invalid Token Received');
+        }
+        return token;
+      } catch(e: any) {
+        this.reportError(e.message);
+        throw e;
       }
-      return token;
     } else {
-      throw new Error('Authentication API is not initialized');
+      const message = 'Authentication API is not initialized';
+      this.reportError(message);
+      throw message;
     }
   }
 
