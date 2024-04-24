@@ -33,9 +33,6 @@
 <svelte:window on:keydown={handleSearchKeydown} />
 
 <Navbar class="px-2 sm:px-4 py-2.5 fixed w-full z-20 top-0 start-0 border-b">
-  <div>
-
-  </div>
   <div class="flex w-full sm:w-auto order-2">
     <div class="flex-1">
       <Search size="sm" placeholder="Filter" bind:value={filter} />
@@ -54,9 +51,4 @@
   </div>
 
   <SearchList search={$search} />
-
-  <!-- <svelte:fragment slot="footer">
-    <Button on:click={() => alert('Handle "success"')}>I accept</Button>
-    <Button color="alternative">Decline</Button>
-  </svelte:fragment> -->
 </Modal>

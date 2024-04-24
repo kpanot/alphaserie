@@ -25,7 +25,7 @@
   $: bgCssClass = hasNext ? 'hover:border-orange-400': (isFinished ? 'hover:border-green-400' : 'hover:border-slate-300');
 </script>
 
-<div class="w-full ml-1 mb-1 p-1 rounded-md dark:border-gray-700 divide-gray-200 font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 flex-initial transition-all duration-75 border-transparent border-2 {bgCssClass}">
+<div class="w-full mb-1 p-1 rounded-md dark:border-gray-700 divide-gray-200 font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 flex-initial transition-all duration-75 border-transparent border-2 {bgCssClass}">
   <div class="flex">
     <!-- svelte-ignore a11y-invalid-attribute -->
     <a
