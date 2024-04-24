@@ -1,5 +1,5 @@
 import { createMutation, useQueryClient, createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
-import type { EpisodesApi, SearchApi, ShowsApi } from 'sdk';
+import type { EpisodesApi, SearchApi, SeasonsApi, ShowsApi } from 'sdk';
 import { derived, writable } from 'svelte/store';
 
 const LIMIT_SUMMARIZE_PARALLEL = 199;
@@ -46,7 +46,7 @@ export const isToSee = (date?: string) => {
  * @param showsApi Show API instance
  * @param episodesApi Episode API instance
  */
-const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi) => {
+const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi) => {
   const userIdLabel = { userId };
   const client = useQueryClient();
 
@@ -127,7 +127,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
           order: 'last_seen',
           excluded_status: 'archived',
           summary: 'true',
-          includes: 'userVisited',
+          includes: 'seasons,userVisited',
           limit: `${LIMIT_SUMMARIZE_PARALLEL}`
         }) as any as Promise<{ shows: any }>;
       }
@@ -154,6 +154,15 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
     onSuccess: () => refresh()
   });
 
+  /** Mark the given seasons as seen */
+  const markAllAsSeen = createMutation({
+    mutationFn: ({ id, seasons }: { id: string, seasons: string[] }) => Promise.all(seasons.map((season) => seasonsApi.postSeasonsWatched({id, season}))),
+    onSuccess: async (_data, {id}) => {
+      client.invalidateQueries({ queryKey: [userIdLabel, EPISODE_SHOW, CURRENT_LABEL], refetchType: 'active' });
+      await client.invalidateQueries({ queryKey: [userIdLabel, EPISODE_LABEL, { showId: id }], refetchType: 'active' });
+    }
+  });
+
   const allShows = derived([currentStore, archiveStore], ([current, archive]) => {
     return [
       ...(current?.data?.pages || []),
@@ -168,6 +177,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
   });
 
   return {
+    markAllAsSeen,
     allShows,
     currentStore,
     archiveStore,
@@ -187,7 +197,7 @@ export type StoreEpisode = ReturnType<Store['episodes']>;
 /**
  * Writable store to define the APIs to use
  */
-export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi }>();
+export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi }>();
 
 /**
  * Store of Shows
@@ -197,6 +207,6 @@ export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episo
  */
 export default derived<typeof registerApis, Store>(registerApis, ($apis, set) => {
   if ($apis) {
-    set(shows($apis.userId, $apis.showsApi, $apis.episodesApi, $apis.searchApi));
+    set(shows($apis.userId, $apis.showsApi, $apis.episodesApi, $apis.searchApi, $apis.seasonsApi));
   }
 });

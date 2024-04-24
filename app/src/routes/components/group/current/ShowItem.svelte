@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { Button, Spinner } from "flowbite-svelte";
-  import { hasNextToSee, type Store } from "../../../../lib/shows.store";
+  import { Button, Indicator, Spinner } from "flowbite-svelte";
+  import { hasNextToSee } from "../../../../lib/shows.store";
+  import store from '../../../../lib/shows.store';
   import { ArchiveArrowDownSolid, ChevronDownOutline, ChevronUpOutline, LinkOutline } from "flowbite-svelte-icons";
   import { createEventDispatcher } from "svelte";
   import EpisodeList from "./EpisodeList.svelte";
@@ -10,6 +11,12 @@
 
   let expended: boolean = false;
   const dispatch = createEventDispatcher();
+  const displayButtonLimit = 2;
+  const markAllAsSeen = $store.markAllAsSeen;
+
+  const markAsView = () => {
+    $markAllAsSeen.mutate({id: show.id, seasons: show.seasons_details.map(({number}: {number: number}) => `${number}`)});
+  }
 
   $: hasNext = hasNextToSee(show);
   $: isFinished = show?.status === 'Ended';
@@ -28,6 +35,22 @@
       on:click={() => expended = !expended}>
       {show.title}
     </a>
+    {#if (show.userVisited?.remaining > 0 && (show.userVisited?.remaining <= displayButtonLimit || expended))}
+      {@const req = $markAllAsSeen}
+      <div class="flex-none w-32 pl-2">
+        <Button title="Mark all the episodes as viewed" outline size="xs" class="relative ml-auto" on:click={() => markAsView()}>
+          {#if req.isPending && req.variables?.id === show.id}
+            <Spinner size={3} class="-ml-1 mr-1" />
+            <span class="-mt-1 -mb-1">Marking...</span>
+          {:else}
+            <span class="-mt-1 -mb-1">Mark episodes</span>
+          {/if}
+          <Indicator color="orange" border size="xl" placement="top-right">
+            <span class="text-white text-xs font-bold">{show.userVisited?.remaining < 100 ? show.userVisited?.remaining : '?'}</span>
+          </Indicator>
+        </Button>
+      </div>
+    {/if}
     <div class="flex-none w-7">
       <a href="https://www.betaseries.com/serie/{show.slug}" target="_blank" class="text-center font-medium inline-flex items-center justify-center px-3 py-2 text-xs">
         <LinkOutline class="{cssClass}" />
@@ -35,9 +58,9 @@
     </div>
     <div class="flex-none w-7">
       {#if isArchivedLoading}
-      <div class="pl-2">
-        <Spinner size={4} />
-      </div>
+        <div class="pl-2">
+          <Spinner size={4} />
+        </div>
       {:else}
         <Button size="xs" color="none" title="Archive" on:click={()=> dispatch('archive')}>
           <ArchiveArrowDownSolid class="{cssClass}" />
