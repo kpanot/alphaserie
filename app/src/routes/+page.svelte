@@ -46,7 +46,7 @@
 
 
 {#if apiClient}
-  <div class="relative px-8">
+  <div class="relative px-3 sm:px-8">
     <Filter bind:filter={filter} />
     <div class="mt-16">
       {#if (displayErrorBanner)}
