@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Alert, Button } from 'flowbite-svelte';
+  import { Alert, Button, Navbar } from 'flowbite-svelte';
   import { ExclamationCircleSolid } from 'flowbite-svelte-icons';
   import { EpisodesApi, PlanningApi, SearchApi, SeasonsApi, ShowsApi } from 'sdk';
   import User from './components/User.svelte';
@@ -49,7 +49,14 @@
 
 {#if apiClient}
   <div class="relative px-3 sm:px-8">
-    <Filter bind:filter={filter} />
+    <Navbar class="px-2 sm:px-4 py-2.5 fixed w-full z-20 top-0 start-0 border-b">
+      <div class="flex-1 hidden sm:block">
+        <User apiClient={apiClient} bind:userId={userId} />
+      </div>
+      <div class="flex w-full sm:w-auto order-2">
+        <Filter bind:filter={filter} />
+      </div>
+    </Navbar>
     <div class="mt-16">
       {#if (displayErrorBanner)}
         <Alert color="red" dismissable class="mb-2">
@@ -59,8 +66,7 @@
         </Alert>
       {/if}
       <div class="flex flex-row">
-        <div class="flex-initial shrink-0 w-0 sm:w-1/4 collapse sm:visible pr-4">
-          <User apiClient={apiClient} bind:userId={userId} />
+        <div class="flex-initial shrink-0 w-0 sm:w-1/4 pr-4 hidden sm:block">
           <Planning />
         </div>
         <div class="flex-auto ">

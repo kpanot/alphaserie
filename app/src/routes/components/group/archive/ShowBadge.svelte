@@ -10,12 +10,14 @@
 
   const badgeClass: Record<string, string> = {
     dark: 'hover:border-slate-300',
-    green: 'hover:border-green-300'
+    green: 'hover:border-green-300',
+    primary: 'hover:border-primary-500'
   }
 
   const buttonClass: Record<string, string> = {
     dark: 'bg-gray-300 text-white dark:text-gray-800 hover:bg-gray-400 hover:text-gray',
-    green: 'bg-green-300 text-white dark:text-green-800 hover:bg-green-400 hover:text-green'
+    green: 'bg-green-300 text-white dark:text-green-800 hover:bg-green-400 hover:text-green',
+    primary: 'bg-primary-500 text-white dark:text-primary-800 hover:bg-primary-600 hover:text-primary'
   }
 
   const dispatch = createEventDispatcher();
