@@ -40,17 +40,12 @@
         {@const req = $unarchive}
         {#if req}
           <ShowBadge
-            color="{!hasNextToSee(show) ? 'dark' : 'green'}"
+            color="{!hasNextToSee(show) ? 'dark' : 'primary'}"
             show="{show}"
             isLoading="{req.isPending && req.variables === show.id}"
             on:unarchive={() => req.mutate(show.id)} />
         {/if}
       {/each}
     </div>
-    <!-- {#if $archiveStore && ($archiveStore).fetchStatus !== 'idle'}
-      <div class="ml-2 flex-initial">
-        <Spinner size={5}/>
-      </div>
-    {/if} -->
   {/if}
 </GroupItem>
