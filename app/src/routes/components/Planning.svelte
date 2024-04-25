@@ -2,15 +2,24 @@
   import { derived } from 'svelte/store';
   import store from '../../lib/shows.store';
   import { Badge, Skeleton, Timeline, TimelineItem } from 'flowbite-svelte';
-  import { CalendarWeekSolid, ExclamationCircleSolid } from 'flowbite-svelte-icons';
+  import { CalendarWeekSolid, ExclamationCircleSolid, BookmarkSolid } from 'flowbite-svelte-icons';
   import GroupItem from './group/GroupItem.svelte';
 
   const LimitOfPlanningItemToDisplay = 30;
 
+  const isToday = ({date}: {date?: string}) => {
+    if (!date) {
+      return false;
+    }
+    const d = new Date(date);
+    const today = new Date();
+    return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDay() === today.getDay();
+  }
+
   $: planningStore = $store?.planningStore;
   $: planning = planningStore && derived(planningStore, ({data}) => {
       return data && data.episodes
-        .filter(({ date }) => (new Date(date)).getTime() > Date.now())
+        .filter(({ date }) => (new Date(date)).getTime() > (new Date(new Date().setDate(new Date().getDate() - 1)).getTime()))
         .sort((a: any, b: any) => {
           if (!a.date) {
             return 1;
@@ -39,7 +48,11 @@
                   {#if (episode.episode === 1)}
                     <ExclamationCircleSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
                   {:else}
-                    <CalendarWeekSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                    {#if (isToday(episode))}
+                      <BookmarkSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                    {:else}
+                      <CalendarWeekSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                    {/if}
                   {/if}
                 </span>
               </svelte:fragment>
