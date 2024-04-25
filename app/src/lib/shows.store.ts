@@ -1,15 +1,17 @@
 import { createMutation, useQueryClient, createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
-import type { EpisodesApi, SearchApi, SeasonsApi, ShowsApi } from 'sdk';
+import type { EpisodesApi, SearchApi, SeasonsApi, ShowsApi, PlanningApi } from 'sdk';
 import { derived, writable } from 'svelte/store';
 
 const LIMIT_SUMMARIZE_PARALLEL = 199;
+const LIMIT_EPISODE_NUMBER = 30;
 const LIMIT_SEARCH_RESULT = 50;
 
 const ARCHIVES_LABEL = 'archives';
 const CURRENT_LABEL = 'current';
 const EPISODE_LABEL = 'episodes';
-const EPISODE_SHOW = 'show';
+const SHOW_LABEL = 'show';
 const SEARCH_LABEL = 'search';
+const PLANNING_LABEL = 'planning';
 
 /**
  * Filter the shows to display based on their names
@@ -46,7 +48,7 @@ export const isToSee = (date?: string) => {
  * @param showsApi Show API instance
  * @param episodesApi Episode API instance
  */
-const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi) => {
+const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi, planningApi: PlanningApi) => {
   const userIdLabel = { userId };
   const client = useQueryClient();
 
@@ -89,10 +91,34 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
     };
   };
 
+  const getFormattedMonth = (d: Date = new Date()) => {
+    const month = (d.getMonth() % 12) + 1;
+    console.log(`${d.getFullYear()}-${(month < 10 ? '0' : '')}${month}`)
+    return `${d.getFullYear()}-${(month < 10 ? '0' : '')}${month}`;
+  };
+
+  /** Planning of  */
+  const planningStore = createQuery({
+    queryKey: [userIdLabel, PLANNING_LABEL],
+    queryFn: async () => {
+      const now = new Date();
+      const formattedDate = getFormattedMonth(now);
+      const formattedDateNextMonth = getFormattedMonth(new Date(now.setMonth(now.getMonth() + 1)));
+      const res = await Promise.all([
+        planningApi.getPlanningMember({ month: formattedDate, id: userId, unseen: 'true' }) as any as Promise<{ episodes: any[] }>,
+        planningApi.getPlanningMember({ month: formattedDateNextMonth, id: userId, unseen: 'true' }) as any as Promise<{ episodes: any[] }>
+       ]);
+      return res.reduce(({ episodes }, acc) => {
+        acc.episodes = [...acc.episodes, ...episodes];
+        return acc;
+      }, { episodes: [] } as { episodes: any[]});
+    }
+  });
+
   /** Archived show store */
   const archiveStore = derived(
     createInfiniteQuery({
-      queryKey: [userIdLabel, EPISODE_SHOW, ARCHIVES_LABEL],
+      queryKey: [userIdLabel, SHOW_LABEL, ARCHIVES_LABEL],
       initialPageParam: { offset: 0 },
       getNextPageParam: (lastPage: any, _allPages, lastPageParam) => lastPage.shows.length === LIMIT_SUMMARIZE_PARALLEL ? { offset: lastPageParam.offset + 1 } : undefined,
       queryFn: ({pageParam}) => {
@@ -117,7 +143,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
   /** Currently followed show store */
   const currentStore = derived(
     createInfiniteQuery({
-      queryKey: [userIdLabel, EPISODE_SHOW, CURRENT_LABEL],
+      queryKey: [userIdLabel, SHOW_LABEL, CURRENT_LABEL],
       initialPageParam: { offset: 0 },
       getNextPageParam: (lastPage: any, _allPages, lastPageParam) => lastPage.shows.length === LIMIT_SUMMARIZE_PARALLEL ? { offset: lastPageParam.offset + 1 } : undefined,
       queryFn: ({ pageParam }) => {
@@ -140,7 +166,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
     }
   );
 
-  const refresh = () => client.invalidateQueries({ queryKey: [userIdLabel, EPISODE_SHOW], refetchType: 'active' });
+  const refresh = () => client.invalidateQueries({ queryKey: [userIdLabel, SHOW_LABEL], refetchType: 'active' });
 
   /** Action to unarchive the show */
   const unarchive = createMutation({
@@ -158,7 +184,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
   const markAllAsSeen = createMutation({
     mutationFn: ({ id, seasons }: { id: string, seasons: string[] }) => Promise.all(seasons.map((season) => seasonsApi.postSeasonsWatched({id, season}))),
     onSuccess: async (_data, {id}) => {
-      client.invalidateQueries({ queryKey: [userIdLabel, EPISODE_SHOW, CURRENT_LABEL], refetchType: 'active' });
+      client.invalidateQueries({ queryKey: [userIdLabel, SHOW_LABEL, CURRENT_LABEL], refetchType: 'active' });
       await client.invalidateQueries({ queryKey: [userIdLabel, EPISODE_LABEL, { showId: id }], refetchType: 'active' });
     }
   });
@@ -177,6 +203,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
   });
 
   return {
+    planningStore,
     markAllAsSeen,
     allShows,
     currentStore,
@@ -197,7 +224,7 @@ export type StoreEpisode = ReturnType<Store['episodes']>;
 /**
  * Writable store to define the APIs to use
  */
-export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi }>();
+export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi, planningApi: PlanningApi }>();
 
 /**
  * Store of Shows
@@ -207,6 +234,6 @@ export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episo
  */
 export default derived<typeof registerApis, Store>(registerApis, ($apis, set) => {
   if ($apis) {
-    set(shows($apis.userId, $apis.showsApi, $apis.episodesApi, $apis.searchApi, $apis.seasonsApi));
+    set(shows($apis.userId, $apis.showsApi, $apis.episodesApi, $apis.searchApi, $apis.seasonsApi, $apis.planningApi));
   }
 });

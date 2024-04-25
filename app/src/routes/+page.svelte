@@ -1,9 +1,10 @@
 <script lang="ts">
   import { Alert, Button } from 'flowbite-svelte';
   import { ExclamationCircleSolid } from 'flowbite-svelte-icons';
-  import { EpisodesApi, SearchApi, SeasonsApi, ShowsApi } from 'sdk';
+  import { EpisodesApi, PlanningApi, SearchApi, SeasonsApi, ShowsApi } from 'sdk';
   import User from './components/User.svelte';
   import Filter from './components/Filter.svelte';
+  import Planning from './components/Planning.svelte';
   import { configuration } from '../lib/environment';
   import { registerApis } from '../lib/shows.store';
   import { page } from '$app/stores';
@@ -38,8 +39,9 @@
   $: episodesApi = apiClient && new EpisodesApi(apiClient);
   $: searchApi = apiClient && new SearchApi(apiClient);
   $: seasonsApi = apiClient && new SeasonsApi(apiClient);
-  $: userId && showsApi && episodesApi && searchApi && seasonsApi
-    ? registerApis.set({userId, showsApi, episodesApi, searchApi, seasonsApi})
+  $: planningApi = apiClient && new PlanningApi(apiClient);
+  $: userId && showsApi && episodesApi && searchApi && seasonsApi && planningApi
+    ? registerApis.set({userId, showsApi, episodesApi, searchApi, seasonsApi, planningApi})
     : undefined;
 
 </script>
@@ -57,8 +59,9 @@
         </Alert>
       {/if}
       <div class="flex flex-row">
-        <div class="flex-initial shrink-0 w-0 sm:w-1/5 collapse sm:visible">
+        <div class="flex-initial shrink-0 w-0 sm:w-1/4 collapse sm:visible pr-4">
           <User apiClient={apiClient} bind:userId={userId} />
+          <Planning />
         </div>
         <div class="flex-auto ">
           <Groups filter={filter} />

@@ -7,13 +7,15 @@
   export let color: 'orange' | 'gray' | 'green';
 
   const textColorMap = {
-    orange: 'text-orange-500',
+    black: 'text-black',
+    orange: 'text-orange-600',
     green: 'text-green-500',
     gray: 'text-gray-400'
   };
 
   const lineColorMap = {
-    orange: 'border-orange-500',
+    black: 'border-black',
+    orange: 'border-orange-600',
     green: 'border-green-500',
     gray: 'border-gray-400'
   };
