@@ -2,9 +2,9 @@
   import { Badge } from "flowbite-svelte";
 
   export let canHide: boolean = false;
-  export let count: string;
+  export let count: string | null;
   export let title: string;
-  export let color: 'orange' | 'gray' | 'green';
+  export let color: 'orange' | 'gray' | 'green' | 'black';
 
   const textColorMap = {
     black: 'text-black',
