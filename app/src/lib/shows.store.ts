@@ -97,13 +97,14 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
     return `${d.getFullYear()}-${(month < 10 ? '0' : '')}${month}`;
   };
 
+  const now = new Date();
+  const formattedDate = getFormattedMonth(now);
+  const formattedDateNextMonth = getFormattedMonth(new Date(now.setMonth(now.getMonth() + 1)));
+
   /** Planning of  */
   const planningStore = createQuery({
     queryKey: [userIdLabel, PLANNING_LABEL],
     queryFn: async () => {
-      const now = new Date();
-      const formattedDate = getFormattedMonth(now);
-      const formattedDateNextMonth = getFormattedMonth(new Date(now.setMonth(now.getMonth() + 1)));
       const res = await Promise.all([
         planningApi.getPlanningMember({ month: formattedDate, id: userId, unseen: 'true' }) as any as Promise<{ episodes: any[] }>,
         planningApi.getPlanningMember({ month: formattedDateNextMonth, id: userId, unseen: 'true' }) as any as Promise<{ episodes: any[] }>
