@@ -49,7 +49,7 @@
 
 {#if apiClient}
   <div class="relative px-3 sm:px-8">
-    <Navbar class="px-2 sm:px-4 py-2.5 fixed w-full z-20 top-0 start-0 border-b">
+    <Navbar class="px-2 sm:px-4 py-2.5 fixed w-full z-20 top-0 start-0 border-b bg-gray-50 border-grey-600">
       <div class="flex-1 hidden sm:block">
         <User apiClient={apiClient} bind:userId={userId} />
       </div>
@@ -57,7 +57,7 @@
         <Filter bind:filter={filter} />
       </div>
     </Navbar>
-    <div class="mt-16">
+    <div class="mx-auto container mt-20">
       {#if (displayErrorBanner)}
         <Alert color="red" dismissable class="mb-2">
           <ExclamationCircleSolid slot="icon" class="w-5 h-5" />

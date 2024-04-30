@@ -28,6 +28,7 @@
   $: episodeSpecialList = episodeList && derived(episodeList, (episodes) => (episodes as any[])?.filter(({special}: any) => !!special));
   $: numberNotSeenSpecial = episodeSpecialList && derived(episodeSpecialList,(episodes) => (episodes as any[])?.filter(({user}) => !user?.seen).length);
   $: episodeFutureList = episodeList && derived(episodeList, (episodes) => (episodes as any[])?.filter(({date, special}: any) => !isToSee(date) && !special));
+
 </script>
 
 <div class="m-2 mt-4">
@@ -43,7 +44,7 @@
             <div slot="title">To Watch {#if $numberNotSeen && $numberNotSeen > 0 }<Badge rounded>{$numberNotSeen}</Badge>{/if}</div>
             <ul>
               {#each $episodeStandardList as episode}
-                <li><Episode episode={episode} store={episodeStore} /></li>
+                <li><Episode episode={episode} store={episodeStore} isLast={$numberNotSeen <= 1} /></li>
               {/each}
             </ul>
           </TabItem>
@@ -52,7 +53,7 @@
               <div slot="title">Future Episodes <Badge rounded color="dark">{$episodeFutureList.length}</Badge></div>
               <ul>
                 {#each $episodeFutureList as episode}
-                  <li><Episode episode={episode} store={episodeStore} /></li>
+                  <li><Episode episode={episode} store={episodeStore} isLast={false}/></li>
                 {/each}
               </ul>
             </TabItem>
@@ -62,7 +63,7 @@
               <div slot="title">Special Episodes {#if $numberNotSeenSpecial && $numberNotSeenSpecial > 0 }<Badge rounded>{$numberNotSeenSpecial}</Badge>{/if}</div>
               <ul>
               {#each $episodeSpecialList as episode}
-                <li><Episode episode={episode} store={episodeStore} /></li>
+                <li><Episode episode={episode} store={episodeStore} isLast={false}/></li>
               {/each}
             </ul>
             </TabItem>
@@ -71,7 +72,7 @@
       {:else}
         <ul class="m-3">
           {#each $episodeStandardList as episode}
-            <li><Episode episode={episode} store={episodeStore} /></li>
+            <li><Episode episode={episode} store={episodeStore} isLast={$numberNotSeen <= 1} /></li>
           {/each}
         </ul>
       {/if}

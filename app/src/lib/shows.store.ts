@@ -3,7 +3,6 @@ import type { EpisodesApi, SearchApi, SeasonsApi, ShowsApi, PlanningApi } from '
 import { derived, writable } from 'svelte/store';
 
 const LIMIT_SUMMARIZE_PARALLEL = 199;
-const LIMIT_EPISODE_NUMBER = 30;
 const LIMIT_SEARCH_RESULT = 50;
 
 const ARCHIVES_LABEL = 'archives';
@@ -81,8 +80,12 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
 
     /** Determine if an episode has been watched or not */
     const watch = createMutation({
-      mutationFn: ({ id, watch }: { id: string, watch: boolean }) => watch ? episodesApi.postEpisodesWatched({ id }) : episodesApi.deleteEpisodesWatched({ id }),
-      onSuccess: () => client.invalidateQueries({ queryKey: [userIdLabel, EPISODE_LABEL, showIdLabel], refetchType: 'active' })
+      mutationFn: ({ id, watch }: { id: string, watch: boolean, isLast?: boolean }) => watch ? episodesApi.postEpisodesWatched({ id }) : episodesApi.deleteEpisodesWatched({ id }),
+      onSuccess: async (_data, { isLast }) => {
+        console.log(isLast);
+        await client.invalidateQueries({ queryKey: [userIdLabel, EPISODE_LABEL, showIdLabel], refetchType: 'active' })
+        await client.invalidateQueries({ queryKey: [userIdLabel, SHOW_LABEL, CURRENT_LABEL], refetchType: isLast ? 'active' : 'none' })
+      }
     });
 
     return {
