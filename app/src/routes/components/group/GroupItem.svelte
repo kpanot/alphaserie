@@ -34,11 +34,13 @@
     </div>
   </div>
   <hr class="border-1 {lineColorMap[color]} mb-3" />
-  {#if !canHide || (typeof count !== 'undefined' && +count > 0)}
-    <slot></slot>
-  {:else}
-    <div class="text-center italic text-slate-400">
-      Nothing to show
-    </div>
-  {/if}
+  <div class="mb-4">
+    {#if !canHide || (typeof count !== 'undefined' && count !== null && +count > 0)}
+      <slot></slot>
+    {:else}
+      <div class="text-center italic text-slate-400">
+        Nothing to show
+      </div>
+    {/if}
+  </div>
 </div>

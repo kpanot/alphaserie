@@ -1,9 +1,11 @@
 <script lang="ts">
   import { Badge, Checkbox, Spinner } from "flowbite-svelte";
   import type { StoreEpisode } from "../../../../lib/shows.store";
+  import { createEventDispatcher } from "svelte";
 
   export let store: StoreEpisode | undefined;
   export let episode: any;
+  export let isLast: boolean;
 
   let badgeColor: 'green' | 'primary';
   $: badgeColor = episode.user?.seen ? 'green' : 'primary';
@@ -11,7 +13,7 @@
 
   const createMutateParameter = (e: Event) => {
     const watch = (e.target as HTMLInputElement)?.checked;
-    return {id: episode.id as string, watch}
+    return {id: episode.id as string, watch, isLast}
   }
 </script>
 
@@ -24,7 +26,7 @@
           <Spinner size={4} />
         </div>
       {:else}
-        <Checkbox checked={episode.user?.seen} on:change={(e) => req.mutate(createMutateParameter(e))} />
+        <Checkbox checked={episode.user?.seen} on:change={(e) => { req.mutate(createMutateParameter(e)); }} />
       {/if}
     {/if}
   </div>
