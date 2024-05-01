@@ -1,6 +1,8 @@
 // import adapter from "@sveltejs/adapter-auto";
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+// import { sveltekit } from '@sveltejs/kit/vite'
+import { SvelteKitPWA } from '@vite-pwa/sveltekit'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -28,6 +30,11 @@ const config = {
       sdk: "../sdk/betaseries/src",
     },
   },
+
+  plugins: [
+    // sveltekit(),
+    SvelteKitPWA()
+  ]
 };
 
 export default config;

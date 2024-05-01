@@ -13,7 +13,7 @@
     }
     const d = new Date(date);
     const today = new Date();
-    return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDay() === today.getDay();
+    return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
   }
 
   const hasSeasonFirst = (episodes?: any[]) => {
@@ -60,21 +60,25 @@
           {#each $planning as episodeObj}
             <TimelineItem title="{episodeObj[0]}">
               <svelte:fragment slot="icon">
-                <span class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-primary-200 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900">
                 {#if (hasSeasonFirst(episodeObj[1]))}
-                  <ExclamationCircleSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                  <span class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-primary-200 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900">
+                    <ExclamationCircleSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                  </span>
                 {:else}
                   {#if (isToday(episodeObj[0]))}
-                    <BookmarkSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                    <span class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-primary-200 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900">
+                      <BookmarkSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                    </span>
                   {:else}
-                    <CalendarWeekSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                    <span class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-primary-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900">
+                      <CalendarWeekSolid class="w-4 h-4 text-primary-500 dark:text-primary-400" />
+                    </span>
                   {/if}
                 {/if}
-                </span>
               </svelte:fragment>
               {#each episodeObj[1] as episode}
                 <div class="text-sm mb-1">
-                  {shortText(episode.show.title)}
+                  <span title={episode.show.title}>{shortText(episode.show.title)}</span>
                   <Badge color="primary">s:{episode.season || 0} e:{episode.episode}</Badge>
                   {#if (episode.title)}
                     <p class="mb-4 text-xs font-normal text-gray-500 dark:text-gray-400">{episode.title}</p>
