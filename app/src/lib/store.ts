@@ -1,5 +1,5 @@
 import { createMutation, useQueryClient, createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
-import type { EpisodesApi, SearchApi, SeasonsApi, ShowsApi, PlanningApi } from 'sdk';
+import type { EpisodesApi, SearchApi, SeasonsApi, ShowsApi, PlanningApi, MembersApi } from 'sdk';
 import { derived, writable } from 'svelte/store';
 
 const LIMIT_SUMMARIZE_PARALLEL = 199;
@@ -11,6 +11,7 @@ const EPISODE_LABEL = 'episodes';
 const SHOW_LABEL = 'show';
 const SEARCH_LABEL = 'search';
 const PLANNING_LABEL = 'planning';
+const MEMBER_LABEL = 'member';
 
 /**
  * Filter the shows to display based on their names
@@ -47,7 +48,7 @@ export const isToSee = (date?: string) => {
  * @param showsApi Show API instance
  * @param episodesApi Episode API instance
  */
-const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi, planningApi: PlanningApi) => {
+const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi, planningApi: PlanningApi, membersApi: MembersApi) => {
   const userIdLabel = { userId };
   const client = useQueryClient();
 
@@ -83,8 +84,9 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
       mutationFn: ({ id, watch }: { id: string, watch: boolean, isLast?: boolean }) => watch ? episodesApi.postEpisodesWatched({ id }) : episodesApi.deleteEpisodesWatched({ id }),
       onSuccess: async (_data, { isLast }) => {
         console.log(isLast);
-        await client.invalidateQueries({ queryKey: [userIdLabel, EPISODE_LABEL, showIdLabel], refetchType: 'active' })
-        await client.invalidateQueries({ queryKey: [userIdLabel, SHOW_LABEL, CURRENT_LABEL], refetchType: isLast ? 'active' : 'none' })
+        await client.invalidateQueries({ queryKey: [userIdLabel, EPISODE_LABEL, showIdLabel], refetchType: 'active' });
+        await client.invalidateQueries({ queryKey: [userIdLabel, SHOW_LABEL, CURRENT_LABEL], refetchType: isLast ? 'active' : 'none' });
+        client.invalidateQueries({ queryKey: [userIdLabel, MEMBER_LABEL], refetchType: 'active' });
       }
     });
 
@@ -104,7 +106,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
   const formattedDate = getFormattedMonth(now);
   const formattedDateNextMonth = getFormattedMonth(new Date(now.setMonth(now.getMonth() + 1)));
 
-  /** Planning of  */
+  /** Planning of the user */
   const planningStore = createQuery({
     queryKey: [userIdLabel, PLANNING_LABEL],
     queryFn: async () => {
@@ -117,6 +119,12 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
         return acc;
       }, { episodes: [] } as { episodes: any[]});
     }
+  });
+
+  /** information relative to the user  */
+  const membersStore = createQuery({
+    queryKey: [userIdLabel, MEMBER_LABEL],
+    queryFn: () => membersApi.getMembersInfos({ id: userId }) as any as Promise<{ member: { stats: any } }>
   });
 
   /** Archived show store */
@@ -170,7 +178,10 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
     }
   );
 
-  const refresh = () => client.invalidateQueries({ queryKey: [userIdLabel, SHOW_LABEL], refetchType: 'active' });
+  const refresh = () => {
+    client.invalidateQueries({ queryKey: [userIdLabel, MEMBER_LABEL], refetchType: 'active' })
+    return client.invalidateQueries({ queryKey: [userIdLabel, SHOW_LABEL], refetchType: 'active' })
+  };
 
   /** Action to unarchive the show */
   const unarchive = createMutation({
@@ -207,6 +218,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
   });
 
   return {
+    membersStore,
     planningStore,
     markAllAsSeen,
     allShows,
@@ -228,7 +240,7 @@ export type StoreEpisode = ReturnType<Store['episodes']>;
 /**
  * Writable store to define the APIs to use
  */
-export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi, planningApi: PlanningApi }>();
+export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi, planningApi: PlanningApi, membersApi: MembersApi }>();
 
 /**
  * Store of Shows
@@ -238,6 +250,6 @@ export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episo
  */
 export default derived<typeof registerApis, Store>(registerApis, ($apis, set) => {
   if ($apis) {
-    set(shows($apis.userId, $apis.showsApi, $apis.episodesApi, $apis.searchApi, $apis.seasonsApi, $apis.planningApi));
+    set(shows($apis.userId, $apis.showsApi, $apis.episodesApi, $apis.searchApi, $apis.seasonsApi, $apis.planningApi, $apis.membersApi));
   }
 });

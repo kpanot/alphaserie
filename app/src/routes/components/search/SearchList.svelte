@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Skeleton } from 'flowbite-svelte';
-  import store from '../../../lib/shows.store';
+  import store from '../../../lib/store';
   import SearchResult from './SearchResult.svelte';
 
   export let search: string | undefined;

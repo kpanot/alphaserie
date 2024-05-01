@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { Alert, Button, Navbar } from 'flowbite-svelte';
+  import { Alert, Button, Navbar, Progressbar } from 'flowbite-svelte';
   import { ExclamationCircleSolid } from 'flowbite-svelte-icons';
-  import { EpisodesApi, PlanningApi, SearchApi, SeasonsApi, ShowsApi } from 'sdk';
+  import { EpisodesApi, MembersApi, PlanningApi, SearchApi, SeasonsApi, ShowsApi } from 'sdk';
   import User from './components/User.svelte';
   import Filter from './components/Filter.svelte';
   import Planning from './components/Planning.svelte';
   import { configuration } from '../lib/environment';
-  import { registerApis } from '../lib/shows.store';
+  import store, { registerApis } from '../lib/store';
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import { AuthenticationApi, BetaseriesIdentifier } from 'sdk';
@@ -40,19 +40,39 @@
   $: searchApi = apiClient && new SearchApi(apiClient);
   $: seasonsApi = apiClient && new SeasonsApi(apiClient);
   $: planningApi = apiClient && new PlanningApi(apiClient);
-  $: userId && showsApi && episodesApi && searchApi && seasonsApi && planningApi
-    ? registerApis.set({userId, showsApi, episodesApi, searchApi, seasonsApi, planningApi})
+  $: membersApi = apiClient && new MembersApi(apiClient);
+  $: userId && showsApi && episodesApi && searchApi && seasonsApi && planningApi && membersApi
+    ? registerApis.set({userId, showsApi, episodesApi, searchApi, seasonsApi, planningApi, membersApi})
     : undefined;
 
+  $: membersStore = $store?.membersStore;
 </script>
 
 
 {#if apiClient}
   <div class="relative px-3 sm:px-8">
     <Navbar class="px-2 sm:px-4 py-2.5 fixed w-full z-20 top-0 start-0 border-b bg-gray-50 border-grey-600">
-      <div class="flex-1 hidden sm:block">
+      <div class="shrink hidden sm:block">
         <User apiClient={apiClient} bind:userId={userId} />
       </div>
+      {#if ($membersStore)}
+        {@const stats = $membersStore.data?.member.stats}
+        <div class="flex-1 px-5 hidden sm:block pt-2 max-w-4xl">
+          {#if (!$membersStore.data && $membersStore.fetchStatus !== 'idle')}
+            <div></div>
+          {:else}
+            <Progressbar progress={stats?.progress} size="h-1.5" />
+            <div class="text-xs flex">
+              <div class="shrink">
+                <span class="text-gray-500"><span class="font-bold">{stats?.episodes}</span> seen</span> <span class="mx-2">/</span> <span class="text-primary-600"><span class="font-bold">{stats?.episodes_to_watch}</span> to see</span>
+              </div>
+              <div class="flex-1 text-right text-gray-400">
+                <span class="font-bold">{stats?.progress}</span> %
+              </div>
+            </div>
+          {/if}
+        </div>
+      {/if}
       <div class="flex w-full sm:w-auto order-2">
         <Filter bind:filter={filter} />
       </div>
