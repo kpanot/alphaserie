@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Badge, Checkbox, Spinner } from "flowbite-svelte";
-  import type { StoreEpisode } from "../../../../lib/shows.store";
-  import { createEventDispatcher } from "svelte";
+  import type { StoreEpisode } from "../../../../lib/store";
 
   export let store: StoreEpisode | undefined;
   export let episode: any;

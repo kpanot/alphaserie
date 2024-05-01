@@ -1,7 +1,7 @@
 <script lang="ts">
   import { derived } from "svelte/store";
-  import { isToSee } from "../../../../lib/shows.store";
-  import store from '../../../../lib/shows.store';
+  import { isToSee } from "../../../../lib/store";
+  import store from '../../../../lib/store';
   import { Tabs, TabItem, Skeleton, Badge } from "flowbite-svelte";
   import Episode from "./Episode.svelte";
 

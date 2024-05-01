@@ -1,6 +1,6 @@
 <script lang="ts">
   import { derived } from 'svelte/store';
-  import store from '../../lib/shows.store';
+  import store from '../../lib/store';
   import { Badge, Skeleton, Timeline, TimelineItem } from 'flowbite-svelte';
   import { CalendarWeekSolid, ExclamationCircleSolid, BookmarkSolid } from 'flowbite-svelte-icons';
   import GroupItem from './group/GroupItem.svelte';

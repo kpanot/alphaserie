@@ -1,8 +1,8 @@
 <script lang="ts">
   import { TextPlaceholder, Checkbox } from "flowbite-svelte";
   import GroupItem from "../GroupItem.svelte";
-  import { filterShow, hasNextToSee } from '../../../../lib/shows.store';
-  import store from '../../../../lib/shows.store';
+  import { filterShow, hasNextToSee } from '../../../../lib/store';
+  import store from '../../../../lib/store';
   import { derived } from "svelte/store";
   import ShowItem from "./ShowItem.svelte";
 
