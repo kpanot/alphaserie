@@ -16,7 +16,7 @@
   });
 </script>
 
-<div class="app">
+<div class="app bg-white">
   <QueryClientProvider client={queryClient}>
     <main>
       <slot></slot>
