@@ -77,7 +77,7 @@
         <Filter bind:filter={filter} />
       </div>
     </Navbar>
-    <div class="mx-auto container mt-20">
+    <div class="mx-auto container pt-20">
       {#if (displayErrorBanner)}
         <Alert color="red" dismissable class="mb-2">
           <ExclamationCircleSolid slot="icon" class="w-5 h-5" />
