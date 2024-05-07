@@ -17,7 +17,7 @@
 
 	const handleSearchKeydown = (e: KeyboardEvent) => {
     if((e.ctrlKey || e.metaKey) && e.key === 'f'){
-      document.getElementsByName('filter')?.[0]?.focus();
+      [...document.getElementsByTagName('input')].filter((e) => e.type === 'search')?.[0]?.focus();
       e.preventDefault();
     }
 	};
@@ -41,7 +41,7 @@
 
 <Modal bind:open={defaultModal} autoclose>
   <div slot="header" class="pr-2 w-full">
-    <Search size="sm" placeholder="Search for show ..." name="search" bind:value={$searchInput}>
+    <Search size="sm" placeholder="Search for show ..." id="filter" bind:value={$searchInput}>
 
     </Search>
   </div>
