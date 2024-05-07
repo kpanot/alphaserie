@@ -16,7 +16,7 @@
   }
 </script>
 
-<div class="rounded-md flex {!episode.user?.seen ? 'hover:bg-slate-200 cursor-pointer' : ''}">
+<div class="rounded-md flex {!episode.user?.seen ? 'hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer' : ''}">
   <div class="flex-none pt-1 pl-1 w-8">
     {#if ($watch)}
       {@const req = $watch}

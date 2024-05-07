@@ -23,7 +23,7 @@
   $: titleColor = hasNext ? 'border-orange-500' : (isFinished ? 'border-green-500' : 'border-transparent text-gray-500');
   $: textColor = hasNext ? 'text-primary-500' : (isFinished ? 'text-green-500' : 'text-gray-500');
   $: cssClass = `w-4 h-4 -m-1 ${textColor} ` + (hasNext ? 'hover:text-primary-700' : (isFinished ? 'hover:text-green-700' : 'hover:text-gray-700'));
-  $: bgCssClass = hasNext ? 'hover:border-primary-400': (isFinished ? 'hover:border-green-400' : 'hover:border-slate-300');
+  $: bgCssClass = hasNext ? 'hover:border-primary-400': (isFinished ? 'hover:border-green-400' : 'hover:border-slate-300 dark:hover:border-slate-500');
 </script>
 
 <div class="w-full mb-1 p-1 rounded-md dark:border-gray-700 divide-gray-200 font-medium bg-gray-100 text-black dark:bg-gray-700 dark:text-gray-300 flex-initial transition-all duration-75 border-transparent border-2 {bgCssClass}">
@@ -79,7 +79,7 @@
   </div>
   {#if expended}
     <div>
-      <hr class="border-1 border-stale-500 m-2" />
+      <hr class="border-1 border-gray-500 dark:border-gray-800 m-2" />
       <EpisodeList show={show} />
     </div>
   {/if}
