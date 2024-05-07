@@ -1,6 +1,6 @@
 <script lang="ts">
   import { derived } from 'svelte/store';
-  import store from '../../../lib/store';
+  import store from '../../../lib/store/show.store';
   import { Spinner } from 'flowbite-svelte';
 
   export let show: {id: string, poster: string | undefined, title: string, release_date: string | undefined};

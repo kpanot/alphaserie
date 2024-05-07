@@ -1,16 +1,12 @@
 import { createMutation, useQueryClient, createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
-import type { EpisodesApi, SearchApi, SeasonsApi, ShowsApi, PlanningApi, MembersApi } from 'sdk';
+import type { EpisodesApi, SearchApi, SeasonsApi, ShowsApi } from 'sdk';
 import { derived, writable } from 'svelte/store';
-
-const LIMIT_SUMMARIZE_PARALLEL = 199;
-const LIMIT_SEARCH_RESULT = 50;
+import { LIMIT_SUMMARIZE_PARALLEL } from './constance';
 
 const ARCHIVES_LABEL = 'archives';
 const CURRENT_LABEL = 'current';
 const EPISODE_LABEL = 'episodes';
 const SHOW_LABEL = 'show';
-const SEARCH_LABEL = 'search';
-const PLANNING_LABEL = 'planning';
 const MEMBER_LABEL = 'member';
 
 /**
@@ -48,23 +44,9 @@ export const isToSee = (date?: string) => {
  * @param showsApi Show API instance
  * @param episodesApi Episode API instance
  */
-const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi, planningApi: PlanningApi, membersApi: MembersApi) => {
+const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, seasonsApi: SeasonsApi) => {
   const userIdLabel = { userId };
   const client = useQueryClient();
-
-  const search = (searchText: string) => {
-    const searchTextLabel = { searchText };
-
-    /** List of the episodes of the show  */
-    const list = createQuery({
-      queryKey: [SEARCH_LABEL, searchTextLabel],
-      queryFn: () => searchApi.getSearchShows({ text: searchText, limit: `${LIMIT_SEARCH_RESULT}` }) as any as Promise<{ shows: any[] }>
-    });
-
-    return {
-      list
-    };
-  }
 
   /**
    * Store for episodes
@@ -95,37 +77,6 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
       watch
     };
   };
-
-  const getFormattedMonth = (d: Date = new Date()) => {
-    const month = (d.getMonth() % 12) + 1;
-    console.log(`${d.getFullYear()}-${(month < 10 ? '0' : '')}${month}`)
-    return `${d.getFullYear()}-${(month < 10 ? '0' : '')}${month}`;
-  };
-
-  const now = new Date();
-  const formattedDate = getFormattedMonth(now);
-  const formattedDateNextMonth = getFormattedMonth(new Date(now.setMonth(now.getMonth() + 1)));
-
-  /** Planning of the user */
-  const planningStore = createQuery({
-    queryKey: [userIdLabel, PLANNING_LABEL],
-    queryFn: async () => {
-      const res = await Promise.all([
-        planningApi.getPlanningMember({ month: formattedDate, id: userId, unseen: 'true' }) as any as Promise<{ episodes: any[] }>,
-        planningApi.getPlanningMember({ month: formattedDateNextMonth, id: userId, unseen: 'true' }) as any as Promise<{ episodes: any[] }>
-       ]);
-      return res.reduce(({ episodes }, acc) => {
-        acc.episodes = [...acc.episodes, ...episodes];
-        return acc;
-      }, { episodes: [] } as { episodes: any[]});
-    }
-  });
-
-  /** information relative to the user  */
-  const membersStore = createQuery({
-    queryKey: [userIdLabel, MEMBER_LABEL],
-    queryFn: () => membersApi.getMembersInfos({ id: userId }) as any as Promise<{ member: { stats: any } }>
-  });
 
   /** Archived show store */
   const archiveStore = derived(
@@ -218,8 +169,6 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
   });
 
   return {
-    membersStore,
-    planningStore,
     markAllAsSeen,
     allShows,
     currentStore,
@@ -227,20 +176,19 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
     unarchive,
     archive,
     episodes,
-    search,
     follow
   }
 };
 
 /** Store Type */
-export type Store = ReturnType<typeof shows>;
+export type StoreShow = ReturnType<typeof shows>;
 /** Episode sub-store */
-export type StoreEpisode = ReturnType<Store['episodes']>;
+export type StoreEpisode = ReturnType<StoreShow['episodes']>;
 
 /**
  * Writable store to define the APIs to use
  */
-export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi, planningApi: PlanningApi, membersApi: MembersApi }>();
+export const registerShowApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi }>();
 
 /**
  * Store of Shows
@@ -248,8 +196,8 @@ export const registerApis = writable<{ userId: string, showsApi: ShowsApi, episo
  * @param showsApi Show API instance
  * @param episodesApi Episode API instance
  */
-export default derived<typeof registerApis, Store>(registerApis, ($apis, set) => {
+export default derived<typeof registerShowApis, StoreShow>(registerShowApis, ($apis, set) => {
   if ($apis) {
-    set(shows($apis.userId, $apis.showsApi, $apis.episodesApi, $apis.searchApi, $apis.seasonsApi, $apis.planningApi, $apis.membersApi));
+    set(shows($apis.userId, $apis.showsApi, $apis.episodesApi, $apis.seasonsApi));
   }
 });

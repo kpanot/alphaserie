@@ -1,0 +1,2 @@
+export const LIMIT_SUMMARIZE_PARALLEL = 199;
+export const LIMIT_SEARCH_RESULT = 50;

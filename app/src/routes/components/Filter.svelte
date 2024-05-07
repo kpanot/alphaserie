@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, Search, Modal, Progressbar } from 'flowbite-svelte';
+  import { Button, Search, Modal } from 'flowbite-svelte';
   import { PlusOutline } from 'flowbite-svelte-icons';
   import { derived, writable, type Readable } from 'svelte/store';
   import SearchList from './search/SearchList.svelte';
