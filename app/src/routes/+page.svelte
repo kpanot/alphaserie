@@ -82,7 +82,7 @@
         <Alert color="red" dismissable class="mb-2">
           <ExclamationCircleSolid slot="icon" class="w-5 h-5" />
           Failed to identify the user.
-          <Button slot="close-button" size="xs" on:click={() => retrieveToken()} class="ms-auto">Retry</Button>
+          <Button slot="close-button" size="xs" on:click={() => retrieveToken()} class="ms-auto" color="red">Retry</Button>
         </Alert>
       {/if}
       <div class="flex flex-row">

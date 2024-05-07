@@ -19,7 +19,7 @@
       <Spinner size="8" />
     </div>
   {:then {member}}
-    <img src={member.avatar} alt="profile" class="border-dashed border-2 border-orange-500 h-10 w-10 rounded-full inline-block"/>
+    <img src={member.avatar} alt="profile" class="border-dashed border-2 border-primary-500 h-10 w-10 rounded-full inline-block"/>
     <span class="ml-2 mt-2 inline-block whitespace-nowrap font-semibold dark:text-white">{member.login}</span>
   {/await}
 {/if}

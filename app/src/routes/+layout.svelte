@@ -16,7 +16,7 @@
   });
 </script>
 
-<div class="app bg-white">
+<div class="app bg-white dark:bg-black">
   <QueryClientProvider client={queryClient}>
     <main>
       <slot></slot>
@@ -25,7 +25,7 @@
   <Footer footerType="socialmedia" class="border-t bg-gray-50 border-grey-600 mt-12">
     <div class="flex sm:items-center sm:justify-between container mx-auto">
       <div class="flex-1 text-xs">
-        <span class="text-gray-400">Made with <HeartSolid class="w-4 h-4 inline-block sm:justify-between text-orange-600" /> by</span>
+        <span class="text-gray-400">Made with <HeartSolid class="w-4 h-4 inline-block sm:justify-between text-primary-600" /> by</span>
         <FooterCopyright href="https://github.com/kpanot" by="Kilian" copyrightMessage="" spanClass="inline-block" />
       </div>
       <div class="flex-none space-x-6 rtl:space-x-reverse sm:justify-center sm:mt-0">
