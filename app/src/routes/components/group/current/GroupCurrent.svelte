@@ -9,6 +9,7 @@
   export let filter: string | undefined;
 
   let finishedOnly = false;
+  let expendedMap: Record<string, boolean> = {};
 
   $: archive = $store?.archive;
   $: currentStore = $store?.currentStore;
@@ -41,7 +42,7 @@
           {@const reqArchive = $archive}
           {#if reqArchive}
             <li>
-              <ShowItem show={show} on:archive={() => reqArchive.mutate(show.id)}  isArchivedLoading="{reqArchive.isPending && reqArchive.variables === show.id}" />
+              <ShowItem show={show} on:archive={() => reqArchive.mutate(show.id)}  isArchivedLoading="{reqArchive.isPending && reqArchive.variables === show.id}" bind:expended={expendedMap[show.id]} />
             </li>
           {/if}
         {/each}
