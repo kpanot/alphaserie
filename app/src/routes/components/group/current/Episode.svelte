@@ -6,8 +6,8 @@
   export let episode: any;
   export let isLast: boolean;
 
-  let badgeColor: 'green' | 'primary';
-  $: badgeColor = episode.user?.seen ? 'green' : 'primary';
+  let badgeColor: 'green' | 'primary' | 'red';
+  $: badgeColor = episode.user?.seen ? 'green' : 'red';
   $: watch = store?.watch;
 
   const createMutateParameter = (e: Event) => {

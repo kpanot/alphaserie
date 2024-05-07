@@ -9,6 +9,7 @@
   const textColorMap = {
     black: 'text-black',
     orange: 'text-orange-600',
+    primary: 'text-primary-600',
     green: 'text-green-500',
     gray: 'text-gray-400'
   };
@@ -16,6 +17,7 @@
   const lineColorMap = {
     black: 'border-black',
     orange: 'border-orange-600',
+    primary: 'border-primary-600',
     green: 'border-green-500',
     gray: 'border-gray-400'
   };

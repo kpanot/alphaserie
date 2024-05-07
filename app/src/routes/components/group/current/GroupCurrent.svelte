@@ -29,7 +29,7 @@
   }
 </script>
 
-<GroupItem title="Current" color="orange" count={count ? $count : 0} canHide={!!$currentStore && ($currentStore).fetchStatus === 'idle'}>
+<GroupItem title="Current" color="primary" count={count ? $count : 0} canHide={!!$currentStore && ($currentStore).fetchStatus === 'idle'}>
   <div class="mt-2" slot="command">
     <Checkbox on:change={switchFinishFilter}><span class="text-slate-400">Not up-to-date only</span></Checkbox>
   </div>

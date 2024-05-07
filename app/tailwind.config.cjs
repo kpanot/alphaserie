@@ -7,23 +7,24 @@ const config = {
 
   plugins: [require('flowbite/plugin')],
 
-  darkMode: 'class',
+  darkMode: 'selector',
 
   theme: {
     extend: {
       colors: {
         // flowbite-svelte
         primary: {
-          50: '#FFF5F2',
-          100: '#FFF1EE',
-          200: '#FFE4DE',
-          300: '#FFD5CC',
-          400: '#FFBCAD',
-          500: '#FE795D',
-          600: '#EF562F',
-          700: '#EB4F27',
-          800: '#CC4522',
-          900: '#A5371B'
+          50: '#f2f7fd',
+          100: '#e5eef9',
+          200: '#c4dcf3',
+          300: '#91c0e8',
+          400: '#56a0da',
+          500: '#3b8dd0',
+          600: '#2067a9',
+          700: '#1b5389',
+          800: '#1a4772',
+          900: '#1b3d5f',
+          950: '#12273f'
         }
       }
     }
