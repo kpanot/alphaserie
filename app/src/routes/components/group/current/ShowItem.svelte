@@ -8,8 +8,8 @@
 
   export let show: any;
   export let isArchivedLoading: boolean;
+  export let expended: boolean = false;
 
-  let expended: boolean = false;
   const dispatch = createEventDispatcher();
   const displayButtonLimit = 2;
   const markAllAsSeen = $store.markAllAsSeen;
