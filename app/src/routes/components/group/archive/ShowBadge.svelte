@@ -11,7 +11,7 @@
   const badgeClass: Record<string, string> = {
     dark: 'hover:border-slate-300',
     green: 'hover:border-green-300',
-    primary: 'hover:border-primary-500'
+    primary: 'hover:border-primary-500 dark:border-primary-900'
   }
 
   const buttonClass: Record<string, string> = {
