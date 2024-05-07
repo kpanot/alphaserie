@@ -49,7 +49,7 @@
     });
 </script>
 <GroupItem title="In coming" color="black" count={null}>
-  <div class="bg-gray-100 py-3 pr-2 rounded-lg transition-all duration-75 border-transparent border-2">
+  <div class="bg-gray-100  dark:bg-gray-700 py-3 pr-2 rounded-lg transition-all duration-75 border-transparent border-2">
     {#if (!$planning && (!$planningStore || $planningStore.fetchStatus !== 'idle'))}
       <div class="m-2 flex-initial">
         <Skeleton />
@@ -78,7 +78,7 @@
             </svelte:fragment>
             {#each episodeObj[1] as episode}
               <div class="text-sm mb-1">
-                <span title={episode.show.title}>{shortText(episode.show.title)}</span>
+                <span title={episode.show.title} class="text-gray-600 dark:text-gray-200 font-bold">{shortText(episode.show.title)}</span>
                 <Badge color="primary">s:{episode.season || 0} e:{episode.episode}</Badge>
                 {#if (episode.title)}
                   <p class="mb-4 text-xs font-normal text-gray-500 dark:text-gray-400">{episode.title}</p>

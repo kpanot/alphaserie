@@ -37,7 +37,7 @@
     {@const hasFutureEpisode = $episodeFutureList && $episodeFutureList.length > 0}
     {@const withTab = hasSpecialEpisode || hasFutureEpisode}
 
-    <div class="bg-gray-50 rounded-lg p-1">
+    <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-1">
       {#if (withTab) }
         <Tabs tabStyle="underline">
           <TabItem open>
