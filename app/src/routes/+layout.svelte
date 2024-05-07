@@ -26,11 +26,11 @@
     <div class="flex sm:items-center sm:justify-between container mx-auto">
       <div class="flex-1 text-xs">
         <span class="text-gray-400">Made with <HeartSolid class="w-4 h-4 inline-block sm:justify-between text-primary-600" /> by</span>
-        <FooterCopyright href="https://github.com/kpanot" by="Kilian" copyrightMessage="" spanClass="inline-block" />
+        <FooterCopyright href="https://github.com/kpanot" by="Kilian" copyrightMessage="" spanClass="inline-block dark:text-gray-300" />
       </div>
       <div class="flex-none space-x-6 rtl:space-x-reverse sm:justify-center sm:mt-0">
         <FooterIcon href="https://github.com/kpanot/alphaserie" title="Github">
-          <GithubSolid class="w-4 h-4 text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white" />
+          <GithubSolid class="w-4 h-4 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" />
         </FooterIcon>
       </div>
     </div>
