@@ -1,7 +1,7 @@
 <script lang="ts">
   import { derived } from "svelte/store";
-  import { isToSee } from "../../../../lib/store";
-  import store from '../../../../lib/store';
+  import { isToSee } from "../../../../lib/store/show.store";
+  import store from '../../../../lib/store/show.store';
   import { Tabs, TabItem, Skeleton, Badge } from "flowbite-svelte";
   import Episode from "./Episode.svelte";
 
@@ -78,7 +78,7 @@
       {/if}
     </div>
   {:else if !$episodeStoreList || ($episodeStoreList).fetchStatus !== 'idle'}
-    <div class="ml-2 flex-initial">
+    <div class="ml-2 flex-initial dark:ml-0 dark:bg-gray-800 dark:rounded-lg dark:p-4">
       <Skeleton />
     </div>
   {/if}

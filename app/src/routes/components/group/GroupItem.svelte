@@ -4,7 +4,7 @@
   export let canHide: boolean = false;
   export let count: string | null;
   export let title: string;
-  export let color: 'orange' | 'gray' | 'green' | 'black';
+  export let color: 'orange' | 'gray' | 'green' | 'black' | 'primary';
 
   const textColorMap = {
     black: 'text-black',

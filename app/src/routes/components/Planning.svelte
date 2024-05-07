@@ -1,6 +1,6 @@
 <script lang="ts">
   import { derived } from 'svelte/store';
-  import store from '../../lib/store';
+  import store from '../../lib/store/planning.store';
   import { Badge, Skeleton, Timeline, TimelineItem } from 'flowbite-svelte';
   import { CalendarWeekSolid, ExclamationCircleSolid, BookmarkSolid } from 'flowbite-svelte-icons';
   import GroupItem from './group/GroupItem.svelte';
@@ -51,8 +51,8 @@
 <GroupItem title="In coming" color="black" count={null}>
   <div class="bg-gray-100  dark:bg-gray-700 py-3 pr-2 rounded-lg transition-all duration-75 border-transparent border-2">
     {#if (!$planning && (!$planningStore || $planningStore.fetchStatus !== 'idle'))}
-      <div class="m-2 flex-initial">
-        <Skeleton />
+      <div class="m-2 flex-initial dark:mr-0">
+        <Skeleton class="dark:bg-gray-800 dark:rounded-lg dark:p-2"/>
       </div>
     {/if}
     {#if ($planning)}
@@ -61,13 +61,13 @@
           <TimelineItem title="{episodeObj[0]}">
             <svelte:fragment slot="icon">
               {#if (hasSeasonFirst(episodeObj[1]))}
-                <span class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-primary-200 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900">
-                  <ExclamationCircleSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                <span class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-orange-200 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-orange-900">
+                  <ExclamationCircleSolid class="w-4 h-4 text-orange-600 dark:text-orange-400" />
                 </span>
               {:else}
                 {#if (isToday(episodeObj[0]))}
-                  <span class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-primary-200 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900">
-                    <BookmarkSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                  <span class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-orange-200 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-orange-900">
+                    <BookmarkSolid class="w-4 h-4 text-orange-600 dark:text-orange-400" />
                   </span>
                 {:else}
                   <span class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-primary-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900">

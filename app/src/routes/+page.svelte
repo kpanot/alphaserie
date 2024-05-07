@@ -6,11 +6,15 @@
   import Filter from './components/Filter.svelte';
   import Planning from './components/Planning.svelte';
   import { configuration } from '../lib/environment';
-  import store, { registerApis } from '../lib/store';
+  import { registerShowApis } from '../lib/store/show.store';
+  import { registerMemberApis } from '../lib/store/member.store';
+  import { registerPlanningApis } from '../lib/store/planning.store';
+  import { registerSearchApis } from '../lib/store/search.store';
+  import store from '../lib/store/member.store';
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import { AuthenticationApi, BetaseriesIdentifier } from 'sdk';
-  import { ApiFetchClient, ExceptionReply, type ApiClient } from '@ama-sdk/core';
+  import { ApiFetchClient, type ApiClient } from '@ama-sdk/core';
   import Groups from './components/Groups.svelte';
 
   let apiClient: ApiClient | undefined;
@@ -41,11 +45,13 @@
   $: seasonsApi = apiClient && new SeasonsApi(apiClient);
   $: planningApi = apiClient && new PlanningApi(apiClient);
   $: membersApi = apiClient && new MembersApi(apiClient);
-  $: userId && showsApi && episodesApi && searchApi && seasonsApi && planningApi && membersApi
-    ? registerApis.set({userId, showsApi, episodesApi, searchApi, seasonsApi, planningApi, membersApi})
-    : undefined;
 
-  $: membersStore = $store?.membersStore;
+  $: if (userId && showsApi && episodesApi && searchApi && seasonsApi) { registerShowApis.set({userId, showsApi, episodesApi, searchApi, seasonsApi}) }
+  $: if (userId && planningApi) { registerPlanningApis.set({userId, planningApi}) }
+  $: if (userId && membersApi) { registerMemberApis.set({userId, membersApi}) }
+  $: if (searchApi) { registerSearchApis.set({searchApi}) }
+
+  $: membersStore = $store?.members;
 </script>
 
 
