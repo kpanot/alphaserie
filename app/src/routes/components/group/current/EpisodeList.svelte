@@ -1,7 +1,7 @@
 <script lang="ts">
   import { derived } from "svelte/store";
-  import { isToSee } from "../../../../lib/store/show.store";
-  import store from '../../../../lib/store/show.store';
+  import { isToSee } from "store/show.store";
+  import store from 'store/show.store';
   import { Tabs, TabItem, Skeleton, Badge } from "flowbite-svelte";
   import Episode from "./Episode.svelte";
 
@@ -43,8 +43,8 @@
           <TabItem open>
             <div slot="title">To Watch {#if $numberNotSeen && $numberNotSeen > 0 }<Badge rounded>{$numberNotSeen}</Badge>{/if}</div>
             <ul>
-              {#each $episodeStandardList as episode}
-                <li><Episode episode={episode} store={episodeStore} isLast={$numberNotSeen <= 1} /></li>
+              {#each $episodeStandardList as episode, i}
+                <li><Episode episode={episode} store={episodeStore} isLast={i === 0} /></li>
               {/each}
             </ul>
           </TabItem>
@@ -71,8 +71,8 @@
         </Tabs>
       {:else}
         <ul class="m-3">
-          {#each $episodeStandardList as episode}
-            <li><Episode episode={episode} store={episodeStore} isLast={$numberNotSeen <= 1} /></li>
+          {#each $episodeStandardList as episode, i}
+            <li><Episode episode={episode} store={episodeStore} isLast={i === 0} /></li>
           {/each}
         </ul>
       {/if}

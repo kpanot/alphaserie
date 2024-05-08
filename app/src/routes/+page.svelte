@@ -6,11 +6,11 @@
   import Filter from './components/Filter.svelte';
   import Planning from './components/Planning.svelte';
   import { configuration } from '../lib/environment';
-  import { registerShowApis } from '../lib/store/show.store';
-  import { registerMemberApis } from '../lib/store/member.store';
-  import { registerPlanningApis } from '../lib/store/planning.store';
-  import { registerSearchApis } from '../lib/store/search.store';
-  import store from '../lib/store/member.store';
+  import { registerShowApis } from 'store/show.store';
+  import { registerMemberApis } from 'store/member.store';
+  import { registerPlanningApis } from 'store/planning.store';
+  import { registerSearchApis } from 'store/search.store';
+  import store from 'store/member.store';
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import { AuthenticationApi, BetaseriesIdentifier } from 'sdk';
@@ -46,7 +46,7 @@
   $: planningApi = apiClient && new PlanningApi(apiClient);
   $: membersApi = apiClient && new MembersApi(apiClient);
 
-  $: if (userId && showsApi && episodesApi && searchApi && seasonsApi) { registerShowApis.set({userId, showsApi, episodesApi, searchApi, seasonsApi}) }
+  $: if (userId && showsApi && episodesApi  && seasonsApi) { registerShowApis.set({userId, showsApi, episodesApi, seasonsApi}) }
   $: if (userId && planningApi) { registerPlanningApis.set({userId, planningApi}) }
   $: if (userId && membersApi) { registerMemberApis.set({userId, membersApi}) }
   $: if (searchApi) { registerSearchApis.set({searchApi}) }

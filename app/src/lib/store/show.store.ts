@@ -1,5 +1,5 @@
 import { createMutation, useQueryClient, createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
-import type { EpisodesApi, SearchApi, SeasonsApi, ShowsApi } from 'sdk';
+import type { EpisodesApi, SeasonsApi, ShowsApi } from 'sdk';
 import { derived, writable } from 'svelte/store';
 import { LIMIT_SUMMARIZE_PARALLEL } from './constance';
 
@@ -188,7 +188,7 @@ export type StoreEpisode = ReturnType<StoreShow['episodes']>;
 /**
  * Writable store to define the APIs to use
  */
-export const registerShowApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, searchApi: SearchApi, seasonsApi: SeasonsApi }>();
+export const registerShowApis = writable<{ userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, seasonsApi: SeasonsApi }>();
 
 /**
  * Store of Shows

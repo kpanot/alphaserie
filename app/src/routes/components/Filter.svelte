@@ -17,31 +17,29 @@
 
 	const handleSearchKeydown = (e: KeyboardEvent) => {
     if((e.ctrlKey || e.metaKey) && e.key === 'f'){
-      [...document.getElementsByTagName('input')].filter((e) => e.type === 'search')?.[0]?.focus();
+      document.getElementById('filter')?.focus();
       e.preventDefault();
     }
 	};
 
-  $: {
-    if (defaultModal) {
-      setTimeout(() => document.getElementsByName('search')?.[0]?.focus(), 0)
-    }
-	}
+  $: if (defaultModal) {
+    setTimeout(() => document.getElementById('search')?.focus(), 0)
+  }
 
 </script>
 
 <svelte:window on:keydown={handleSearchKeydown} />
 
 <div class="flex-1">
-  <Search size="sm" placeholder="Filter" bind:value={filter} />
+  <Search size="sm" placeholder="Filter" id="filter" bind:value={filter} />
 </div>
 <div class="flex-none pl-2 pt-1 sm:pt-0">
-  <Button title="Follow an new show" size="xs" on:click={() => defaultModal = true}><PlusOutline size="sm" /></Button>
+  <Button title="Follow a new show" size="xs" on:click={() => defaultModal = true}><PlusOutline size="sm" /></Button>
 </div>
 
 <Modal bind:open={defaultModal} autoclose>
   <div slot="header" class="pr-2 w-full">
-    <Search size="sm" placeholder="Search for show ..." id="filter" bind:value={$searchInput}>
+    <Search size="sm" placeholder="Search for show ..." id="search" bind:value={$searchInput}>
 
     </Search>
   </div>
