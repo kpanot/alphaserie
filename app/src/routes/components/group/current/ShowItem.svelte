@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button, Indicator, Spinner } from "flowbite-svelte";
-  import { hasNextToSee } from "../../../../lib/store/show.store";
-  import store from '../../../../lib/store/show.store';
+  import { hasNextToSee } from "store/show.store";
+  import store from 'store/show.store';
   import { ArchiveArrowDownSolid, ChevronDownOutline, ChevronUpOutline, LinkOutline } from "flowbite-svelte-icons";
   import { createEventDispatcher } from "svelte";
   import EpisodeList from "./EpisodeList.svelte";

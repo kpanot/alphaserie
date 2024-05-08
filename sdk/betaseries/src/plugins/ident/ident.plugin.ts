@@ -16,7 +16,7 @@ interface authenticationResponse {
 }
 
 /**
- * Azure Api Management identification plugin
+ * Betaseries Api Management identification plugin
  */
 export class BetaseriesIdentifier implements RequestPlugin {
 

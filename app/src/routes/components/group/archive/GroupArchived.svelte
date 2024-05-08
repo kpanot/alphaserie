@@ -2,8 +2,8 @@
   import { Checkbox, TextPlaceholder } from "flowbite-svelte";
   import GroupItem from "../GroupItem.svelte";
   import ShowBadge from "./ShowBadge.svelte";
-  import {filterShow, hasNextToSee} from '../../../../lib/store/show.store';
-  import store from '../../../../lib/store/show.store';
+  import {filterShow, hasNextToSee} from 'store/show.store';
+  import store from 'store/show.store';
   import { derived } from "svelte/store";
 
   export let filter: string | undefined;

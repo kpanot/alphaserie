@@ -1,6 +1,6 @@
 <script lang="ts">
   import { derived } from 'svelte/store';
-  import store from '../../../lib/store/show.store';
+  import store from 'store/show.store';
   import { Spinner } from 'flowbite-svelte';
 
   export let show: {id: string, poster: string | undefined, title: string, release_date: string | undefined};
@@ -10,7 +10,7 @@
   $: follow = $store.follow
 </script>
 
-<a class="flex {$isAlreadyFollowed ? 'cursor-default' : 'hover:bg-slate-200 cursor-pointer'} pl-2 rounded-md" href={null} title="follow {show.title}" on:click={() => $follow.mutate(show.id)}>
+<a class="flex {$isAlreadyFollowed ? 'cursor-default' : 'hover:bg-slate-200 dark:hover:bg-slate-600 cursor-pointer'} pl-2 rounded-md" href={null} title="follow {show.title}" on:click={() => $follow.mutate(show.id)}>
   <div class="flex-none w-12 mt-1 mb-1">
     {#if ($follow.isPending && $follow.variables === show.id)}
       <Spinner size="7" />
@@ -23,10 +23,10 @@
       {/if}
     {/if}
   </div>
-  <div class="flex-1 mt-2 {$isAlreadyFollowed ? 'text-gray-300' : ''}">
+  <div class="flex-1 mt-2 {$isAlreadyFollowed ? 'text-gray-300 dark:text-gray-600' : ''}">
     {show.title}
   </div>
-  <div class="flex-none w-12 mt-1 mb-1 italic {$isAlreadyFollowed ? 'text-gray-300' : 'text-gray-400'} text-xs pt-2">
+  <div class="flex-none w-12 mt-1 mb-1 italic {$isAlreadyFollowed ? 'text-gray-300 dark:text-gray-600' : 'text-gray-400'} text-xs pt-2">
     {#if (show.release_date)}
       ({show.release_date})
     {/if}
