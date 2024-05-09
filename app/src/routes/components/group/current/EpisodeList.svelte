@@ -6,6 +6,7 @@
   import Episode from "./Episode.svelte";
 
   export let show: any;
+  export let hoverIndex: number | null = null;
 
   $: episodeStore = show && $store?.episodes(show.id);
   $: episodeStoreList = episodeStore?.list;
@@ -29,6 +30,13 @@
   $: numberNotSeenSpecial = episodeSpecialList && derived(episodeSpecialList,(episodes) => (episodes as any[])?.filter(({user}) => !user?.seen).length);
   $: episodeFutureList = episodeList && derived(episodeList, (episodes) => (episodes as any[])?.filter(({date, special}: any) => !isToSee(date) && !special));
 
+  const onHover = (index: number) => hoverIndex = index;
+  const onLeave = (index: number) => {
+    if (hoverIndex === index) {
+      hoverIndex = null;
+    }
+  };
+
 </script>
 
 <div class="m-2 mt-4">
@@ -44,7 +52,7 @@
             <div slot="title">To Watch {#if $numberNotSeen && $numberNotSeen > 0 }<Badge rounded>{$numberNotSeen}</Badge>{/if}</div>
             <ul>
               {#each $episodeStandardList as episode, i}
-                <li><Episode episode={episode} store={episodeStore} isLast={i === 0} /></li>
+                <li><Episode episode={episode} store={episodeStore} isLast={i === 0} isSubHover={hoverIndex !== null && i > hoverIndex} on:mouseenter={() => onHover(i)} on:mouseleave={() => onLeave(i)}/></li>
               {/each}
             </ul>
           </TabItem>
@@ -52,8 +60,8 @@
             <TabItem>
               <div slot="title">Future Episodes <Badge rounded color="dark">{$episodeFutureList.length}</Badge></div>
               <ul>
-                {#each $episodeFutureList as episode}
-                  <li><Episode episode={episode} store={episodeStore} isLast={false}/></li>
+                {#each $episodeFutureList as episode, i}
+                  <li><Episode episode={episode} store={episodeStore} isLast={false} isSubHover={hoverIndex !== null && i > hoverIndex}/></li>
                 {/each}
               </ul>
             </TabItem>
@@ -62,8 +70,8 @@
             <TabItem>
               <div slot="title">Special Episodes {#if $numberNotSeenSpecial && $numberNotSeenSpecial > 0 }<Badge rounded>{$numberNotSeenSpecial}</Badge>{/if}</div>
               <ul>
-              {#each $episodeSpecialList as episode}
-                <li><Episode episode={episode} store={episodeStore} isLast={false}/></li>
+              {#each $episodeSpecialList as episode, i}
+                <li><Episode episode={episode} store={episodeStore} isLast={false} isSubHover={hoverIndex !== null && i > hoverIndex} on:mouseenter={() => onHover(i)} on:mouseleave={() => onLeave(i)}/></li>
               {/each}
             </ul>
             </TabItem>
@@ -72,7 +80,7 @@
       {:else}
         <ul class="m-3">
           {#each $episodeStandardList as episode, i}
-            <li><Episode episode={episode} store={episodeStore} isLast={i === 0} /></li>
+            <li><Episode episode={episode} store={episodeStore} isLast={i === 0} isSubHover={hoverIndex !== null && i > hoverIndex} on:mouseenter={() => onHover(i)} on:mouseleave={() => onLeave(i)}/></li>
           {/each}
         </ul>
       {/if}
