@@ -79,7 +79,7 @@
             {#each episodeObj[1] as episode}
               <div class="text-sm mb-1">
                 <span title={episode.show.title} class="text-gray-600 dark:text-gray-200 font-bold">{shortText(episode.show.title)}</span>
-                <Badge color="primary">s:{episode.season || 0} e:{episode.episode}</Badge>
+                <Badge color={episode.episode === 1 ? 'red' : 'primary'}>s:{episode.season || 0} e:{episode.episode}</Badge>
                 {#if (episode.title)}
                   <p class="mb-4 text-xs font-normal text-gray-500 dark:text-gray-400">{episode.title}</p>
                 {/if}
