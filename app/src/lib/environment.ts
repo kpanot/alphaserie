@@ -11,6 +11,6 @@ export const configuration: Configuration = {
   client_id: import.meta.env.VITE_CLIENT_ID,
   client_secret: import.meta.env.VITE_CLIENT_SECRET,
   redirect_uri: import.meta.env.VITE_REDIRECT_URI,
-  betaseries_official_api_key: '72ede40de1b2', // found on https://www.betaseries.com,
+  betaseries_official_api_key: import.meta.env.VITE_BS_API_KEY || '',
   apiBasePath: 'https://api.betaseries.com'
 };
