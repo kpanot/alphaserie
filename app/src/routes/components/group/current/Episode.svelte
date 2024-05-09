@@ -5,6 +5,7 @@
   export let store: StoreEpisode | undefined;
   export let episode: any;
   export let isLast: boolean;
+  export let isSubHover: boolean | null;
 
   let badgeColor: 'green' | 'primary' | 'red';
   $: badgeColor = episode.user?.seen ? 'green' : 'red';
@@ -16,7 +17,7 @@
   }
 </script>
 
-<div class="rounded-md flex {!episode.user?.seen ? 'hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer' : ''}">
+<div class="rounded-md flex {!episode.user?.seen ? 'hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer' : ''} {!episode.user?.seen && isSubHover ? 'bg-slate-200/50 dark:bg-slate-700/50' : ''}" role="button" tabindex="0" on:mouseenter on:mouseleave>
   <div class="flex-none pt-1 pl-1 w-8">
     {#if ($watch)}
       {@const req = $watch}
