@@ -31,6 +31,7 @@ jobs:
     env:
       VITE_CLIENT_ID: ${{ secrets.CLIENT_ID }}
       VITE_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      VITE_BS_API_KEY: ${{ secrets.BS_API_KEY }}
       VITE_REDIRECT_URI: https://kpanot.github.io/alphaserie/
     runs-on: ubuntu-latest
     steps:
