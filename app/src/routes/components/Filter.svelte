@@ -31,7 +31,7 @@
 <svelte:window on:keydown={handleSearchKeydown} />
 
 <div class="flex-1">
-  <Search size="sm" placeholder="Filter" id="filter" bind:value={filter} />
+  <Search size="sm" placeholder="Filter" id="filter" bind:value={filter} on:change={() => searchInput.set(filter)}/>
 </div>
 <div class="flex-none pl-2 pt-1 sm:pt-0">
   <Button title="Follow a new show" size="xs" on:click={() => defaultModal = true}><PlusOutline size="sm" /></Button>
