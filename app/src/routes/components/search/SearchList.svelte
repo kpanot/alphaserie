@@ -7,6 +7,7 @@
 
   $: searchResults = search ? $store.search(search).list : undefined;
 </script>
+
 {#if ($searchResults) }
   {@const shows = ($searchResults).data?.shows }
   {@const ss = ($searchResults).data?.shows }
