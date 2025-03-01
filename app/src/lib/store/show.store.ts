@@ -57,7 +57,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
 
     /** Latest episode of the show */
     const latest = createQuery({
-      queryKey: [userIdLabel, EPISODE_LABEL, showIdLabel, 'latest'],
+      queryKey: [userIdLabel, EPISODE_LABEL, showIdLabel],
       queryFn: () => episodesApi.getEpisodesLatest({ id: showId }) as any as Promise<{ episode: any }>
     });
 
