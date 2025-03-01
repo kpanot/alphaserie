@@ -44,9 +44,9 @@
       {#if ($episodeStoreLatest && !expended)}
         <div class="flex-none pl-2 hidden sm:block">
           <Badge color="none">
-            {#if !$latest || ($episodeStoreLatest).fetchStatus !== 'idle'}
+            {#if !$latest && ($episodeStoreLatest).fetchStatus !== 'idle'}
               loading <Spinner size={3} class="ml-2" />
-            {:else}
+            {:else if ($latest)}
               latest: s:{$latest.season || 0} e:{$latest.episode}
             {/if}
           </Badge>
