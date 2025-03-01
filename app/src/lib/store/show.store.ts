@@ -5,6 +5,7 @@ import { LIMIT_SUMMARIZE_PARALLEL } from './constance';
 
 const ARCHIVES_LABEL = 'archives';
 const CURRENT_LABEL = 'current';
+const LATEST_EPISODE_LABEL = 'latest';
 const EPISODE_LABEL = 'episodes';
 const SHOW_LABEL = 'show';
 const MEMBER_LABEL = 'member';
@@ -48,18 +49,24 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
   const userIdLabel = { userId };
   const client = useQueryClient();
 
+  const latestEpisode = (showId: string) => {
+    const showIdLabel = { showId };
+
+    /** Latest episode of the show */
+    const latest = createQuery({
+      queryKey: [userIdLabel, LATEST_EPISODE_LABEL, showIdLabel],
+      queryFn: () => episodesApi.getEpisodesLatest({ id: showId }) as any as Promise<{ episode: any }>
+    });
+
+    return latest
+  }
+
   /**
    * Store for episodes
    * @param showId Show ID
    */
   const episodes = (showId: string) => {
     const showIdLabel = { showId };
-
-    /** Latest episode of the show */
-    const latest = createQuery({
-      queryKey: [userIdLabel, EPISODE_LABEL, showIdLabel],
-      queryFn: () => episodesApi.getEpisodesLatest({ id: showId }) as any as Promise<{ episode: any }>
-    });
 
     /** List of the episodes of the show  */
     const list = createQuery({
@@ -80,8 +87,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
 
     return {
       list,
-      watch,
-      latest
+      watch
     };
   };
 
@@ -158,6 +164,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
     mutationFn: ({ id, seasons }: { id: string, seasons: string[] }) => Promise.all(seasons.map((season) => seasonsApi.postSeasonsWatched({id, season}))),
     onSuccess: async (_data, {id}) => {
       client.invalidateQueries({ queryKey: [userIdLabel, SHOW_LABEL, CURRENT_LABEL], refetchType: 'active' });
+      client.invalidateQueries({ queryKey: [userIdLabel, LATEST_EPISODE_LABEL, { showId: id }], refetchType: 'active' });
       await client.invalidateQueries({ queryKey: [userIdLabel, EPISODE_LABEL, { showId: id }], refetchType: 'active' });
     }
   });
@@ -183,6 +190,7 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
     unarchive,
     archive,
     episodes,
+    latestEpisode,
     follow
   }
 };

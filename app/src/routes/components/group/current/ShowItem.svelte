@@ -19,8 +19,8 @@
     $markAllAsSeen.mutate({id: show.id, seasons: show.seasons_details.map(({number}: {number: number}) => `${number}`)});
   }
 
-  $: episodeStore = show && $store?.episodes(show.id);
-  $: episodeStoreLatest = episodeStore?.latest;
+  $: isRemaining = show?.userVisited?.remaining > 0 && (show?.userVisited?.remaining <= displayButtonLimit || expended);
+  $: episodeStoreLatest = isRemaining ? $store?.latestEpisode(show.id) : undefined;
   $: latest = episodeStoreLatest && derived(episodeStoreLatest, ({data}: any) => data?.episode);
   $: hasNext = hasNextToSee(show);
   $: isFinished = show?.status === 'Ended';
@@ -39,8 +39,7 @@
       on:click={() => expended = !expended}>
       {show.title}
     </a>
-    {#if (show.userVisited?.remaining > 0 && (show.userVisited?.remaining <= displayButtonLimit || expended))}
-      {@const req = $markAllAsSeen}
+    {#if (isRemaining)}
       {#if ($episodeStoreLatest && !expended)}
         <div class="flex-none pl-2 hidden sm:block">
           <Badge color="none">
@@ -52,6 +51,8 @@
           </Badge>
         </div>
       {/if}
+
+      {@const req = $markAllAsSeen}
       <div class="flex-none w-32 pl-2">
         <Button title="Mark all the episodes as viewed" outline size="xs" class="relative ml-auto" on:click={() => markAsView()}>
           {#if req.isPending && req.variables?.id === show.id}
