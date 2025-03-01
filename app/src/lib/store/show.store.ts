@@ -55,6 +55,12 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
   const episodes = (showId: string) => {
     const showIdLabel = { showId };
 
+    /** Latest episode of the show */
+    const latest = createQuery({
+      queryKey: [userIdLabel, EPISODE_LABEL, showIdLabel, 'latest'],
+      queryFn: () => episodesApi.getEpisodesLatest({ id: showId }) as any as Promise<{ episode: any }>
+    });
+
     /** List of the episodes of the show  */
     const list = createQuery({
       queryKey: [userIdLabel, EPISODE_LABEL, showIdLabel],
@@ -74,7 +80,8 @@ const shows = (userId: string, showsApi: ShowsApi, episodesApi: EpisodesApi, sea
 
     return {
       list,
-      watch
+      watch,
+      latest
     };
   };
 

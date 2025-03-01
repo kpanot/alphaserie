@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { Button, Indicator, Spinner } from "flowbite-svelte";
+  import { Badge, Button, Indicator, Spinner } from "flowbite-svelte";
   import { hasNextToSee } from "store/show.store";
   import store from 'store/show.store';
   import { ArchiveArrowDownSolid, ChevronDownOutline, ChevronUpOutline, LinkOutline } from "flowbite-svelte-icons";
   import { createEventDispatcher } from "svelte";
   import EpisodeList from "./EpisodeList.svelte";
+  import { derived } from "svelte/store";
 
   export let show: any;
   export let isArchivedLoading: boolean;
@@ -18,6 +19,9 @@
     $markAllAsSeen.mutate({id: show.id, seasons: show.seasons_details.map(({number}: {number: number}) => `${number}`)});
   }
 
+  $: episodeStore = show && $store?.episodes(show.id);
+  $: episodeStoreLatest = episodeStore?.latest;
+  $: latest = episodeStoreLatest && derived(episodeStoreLatest, ({data}: any) => data?.episode);
   $: hasNext = hasNextToSee(show);
   $: isFinished = show?.status === 'Ended';
   $: titleColor = hasNext ? 'border-orange-500' : (isFinished ? 'border-green-500' : 'border-transparent text-gray-500');
@@ -37,6 +41,17 @@
     </a>
     {#if (show.userVisited?.remaining > 0 && (show.userVisited?.remaining <= displayButtonLimit || expended))}
       {@const req = $markAllAsSeen}
+      {#if ($episodeStoreLatest && !expended)}
+        <div class="flex-none pl-2 hidden sm:block">
+          <Badge color="none">
+            {#if !$latest || ($episodeStoreLatest).fetchStatus !== 'idle'}
+              loading <Spinner size={3} class="ml-2" />
+            {:else}
+              latest: s:{$latest.season || 0} e:{$latest.episode}
+            {/if}
+          </Badge>
+        </div>
+      {/if}
       <div class="flex-none w-32 pl-2">
         <Button title="Mark all the episodes as viewed" outline size="xs" class="relative ml-auto" on:click={() => markAsView()}>
           {#if req.isPending && req.variables?.id === show.id}
@@ -51,12 +66,12 @@
         </Button>
       </div>
     {/if}
-    <div class="flex-none w-7">
+    <div class="flex-none w-7 hidden sm:block">
       <a href="https://www.betaseries.com/serie/{show.slug}" target="_blank" class="text-center font-medium inline-flex items-center justify-center px-3 py-2 text-xs">
         <LinkOutline class="{cssClass}" />
       </a>
     </div>
-    <div class="flex-none w-7">
+    <div class="flex-none w-7 hidden sm:block">
       {#if isArchivedLoading}
         <div class="pl-2">
           <Spinner size={4} />
@@ -67,7 +82,7 @@
         </Button>
       {/if}
     </div>
-    <div class="flex-none w-7">
+    <div class="flex-none w-7 hidden sm:block">
       <Button size="xs" color="none" title="ExpendCollapse" on:click={() => expended = !expended}>
         {#if expended}
           <ChevronUpOutline class="{cssClass}" />
