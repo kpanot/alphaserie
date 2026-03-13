@@ -67,12 +67,12 @@
         </Button>
       </div>
     {/if}
-    <div class="flex-none w-7 hidden sm:block">
+    <div class="flex-none w-7">
       <a href="https://www.betaseries.com/serie/{show.slug}" target="_blank" class="text-center font-medium inline-flex items-center justify-center px-3 py-2 text-xs">
         <LinkOutline class="{cssClass}" />
       </a>
     </div>
-    <div class="flex-none w-7 hidden sm:block">
+    <div class="flex-none w-7">
       {#if isArchivedLoading}
         <div class="pl-2">
           <Spinner size={4} />
