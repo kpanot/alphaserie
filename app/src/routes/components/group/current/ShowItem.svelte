@@ -26,7 +26,7 @@
   $: isFinished = show?.status === 'Ended';
   $: titleColor = hasNext ? 'border-orange-500' : (isFinished ? 'border-green-500' : 'border-transparent text-gray-500');
   $: textColor = hasNext ? 'text-primary-500' : (isFinished ? 'text-green-500' : 'text-gray-500');
-  $: cssClass = `w-4 h-4 -m-1 ${textColor} ` + (hasNext ? 'hover:text-primary-700' : (isFinished ? 'hover:text-green-700' : 'hover:text-gray-700'));
+  $: cssClass = `w-4 h-4 -m-1 ${textColor} ` + (hasNext ? 'hover:text-primary-700' : (isFinished ? 'hover:text-green-700' : 'hover:text-gray-300'));
   $: bgCssClass = hasNext ? 'hover:border-primary-400': (isFinished ? 'hover:border-green-400' : 'hover:border-slate-300 dark:hover:border-slate-500');
 </script>
 
