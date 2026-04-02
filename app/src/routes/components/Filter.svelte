@@ -9,10 +9,17 @@
   let defaultModal = false;
 
   let timerId: any;
+  let previousSearch = '';
   const searchInput = writable<string>();
   const search: Readable<string> = derived(searchInput, (search, set) => {
     if (timerId) { clearTimeout(timerId); }
-    timerId = setTimeout(() => set(search), 400)
+    timerId = setTimeout(() => {
+      set(search);
+      if (search && search.length > (previousSearch?.length || 0)) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      previousSearch = search || '';
+    }, 400)
   });
 
 	const handleSearchKeydown = (e: KeyboardEvent) => {
