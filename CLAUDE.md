@@ -92,8 +92,12 @@ yarn workspace sdk start
   - `+page.svelte`: Main page
   - `+layout.svelte`: Root layout
   - `components/`: Shared components organized by feature
-    - `group/current/`: Components for current/ongoing shows
-    - `group/archive/`: Components for archived shows
+    - `group/`: Show grouping components
+      - `current/`: Components for current/ongoing shows
+      - `archive/`: Components for archived shows
+      - `search/`: Search results group
+        - `GroupSearch.svelte`: Search results when filter produces no results (400ms debounced)
+      - `GroupItem.svelte`: Reusable group container
     - `search/`: Search functionality components
 - **src/lib/**: Shared library code
   - `store/`: Svelte stores for state management (planning, search, show, member)
